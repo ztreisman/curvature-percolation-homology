@@ -72,5 +72,5 @@ axes[1].set_title('Finite-size convergence: amenable vs nonamenable')
 axes[1].legend(fontsize=9)
 
 fig.tight_layout()
-fig.savefig('/mnt/user-data/outputs/curvature_scaling_law.png', dpi=160)
+fig.savefig('curvature_scaling_law.png', dpi=160)
 print(f'saved  slope={slope:.4f}  intercept={intercept:.4f}  R2={r2:.4f}')
