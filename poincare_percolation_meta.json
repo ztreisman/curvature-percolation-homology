@@ -1,0 +1,46 @@
+{
+  "q": 7,
+  "rings": 4,
+  "N": 232,
+  "E": 546,
+  "p_c": 0.199351,
+  "edge_length_a": 1.0905496635070866,
+  "runs": [
+    {
+      "p": 0.199351,
+      "label": "critical",
+      "seed": 1,
+      "beta_1": 1,
+      "n_basis_cycles": 1,
+      "n_highlighted_edges": 4,
+      "n_occupied_edges": 108
+    },
+    {
+      "p": 0.0996755,
+      "label": "subcritical",
+      "seed": 44,
+      "beta_1": 1,
+      "n_basis_cycles": 1,
+      "n_highlighted_edges": 4,
+      "n_occupied_edges": 54
+    },
+    {
+      "p": 0.2990265,
+      "label": "supercritical",
+      "seed": 0,
+      "beta_1": 3,
+      "n_basis_cycles": 3,
+      "n_highlighted_edges": 15,
+      "n_occupied_edges": 142
+    },
+    {
+      "p": 0.49837750000000003,
+      "label": "supercritical",
+      "seed": 0,
+      "beta_1": 18,
+      "n_basis_cycles": 18,
+      "n_highlighted_edges": 84,
+      "n_occupied_edges": 242
+    }
+  ]
+}
