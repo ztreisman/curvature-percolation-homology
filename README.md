@@ -61,6 +61,36 @@ Bond percolation on each {3, q} lattice is run as a filtered simplicial complex
 all three boundary edges are present), and GUDHI extracts persistent H1 across the
 full filtration from a single draw of thresholds.
 
+### {3,7} under bond percolation, visualized
+
+Poincaré-disk renderings of the {3,7} tiling (ring 4, N = 232) at four bond
+occupation probabilities, every edge drawn as a true hyperbolic geodesic arc.
+**Pink** marks triangles whose three edges are all occupied — these get a
+2-simplex filled in by the same construction as the persistent-homology
+pipeline above, so their boundary is trivial in H1, not a loop. **Red** marks
+a genuine basis for H1 of the flag complex, computed by Gaussian elimination
+over GF(2) on the graph's cycle space modulo the subspace spanned by
+filled-triangle boundaries — so a bare occupied triangle is correctly
+excluded rather than miscounted as a loop.
+
+| Subcritical (p ≈ 0.5 p<sub>c</sub>) | Critical (p = p<sub>c</sub>) |
+|---|---|
+| ![Subcritical percolation on {3,7}](figure_poincare_percolation_subcritical.png) | ![Critical percolation on {3,7}](figure_poincare_percolation.png) |
+
+| Supercritical (p ≈ 1.5 p<sub>c</sub>) | Supercritical (p ≈ 2.5 p<sub>c</sub>) |
+|---|---|
+| ![Supercritical percolation on {3,7}, 1.5x threshold](figure_poincare_percolation_supercritical1.png) | ![Supercritical percolation on {3,7}, 2.5x threshold](figure_poincare_percolation_supercritical2.png) |
+
+Loop content is visibly a bulk/supercritical phenomenon here, not a critical
+one: at p_c only a handful of small, isolated loops survive near the
+boundary, while well above p_c loop content spreads across most of the
+tiling — consistent with `pc_window_check.py`, which finds that a window
+around p_c captures 53% of total H1 persistence at the amenable q = 6 point
+but under 0.01% by q = 20. Exact vertex placement is via `hyperbolic_layout.py`,
+which re-orients the triangulation's face list consistently and composes
+hyperbolic isometries — verified to ~1e-14 edge-length error through ring 5.
+See `figure_poincare_percolation.py`.
+
 ---
 
 ## Finding 1 — H1 persistence follows a closed-form scaling law
@@ -103,7 +133,9 @@ $1/\lambda$ term with a derived coefficient of exactly $1/4$. Since the fitted
 slope (0.1477) is smaller than $1/4$, the remaining "bulk" contribution
 (expected minimum-spanning-tree weight per vertex) must carry its own,
 partially-canceling $\lambda$-dependence — confirmed directly in Finding 5.
-See `figure3_scaling_law_final.py` / `curvature_scaling_law.png`.
+See `figure3_scaling_law_final.py`.
+
+![H1 persistence per vertex vs. 1/λ(q), all-twelve and hyperbolic-only fits](curvature_scaling_law.png)
 
 **q = 6's leverage on this fit is real, and informative rather than a flaw.**
 q = 6 is the family's only amenable (λ = 1) point, sitting at 1/λ = 1 versus
