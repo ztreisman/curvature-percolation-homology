@@ -82,14 +82,50 @@ excluded rather than miscounted as a loop.
 | ![Supercritical percolation on {3,7}, 1.5x threshold](figure_poincare_percolation_supercritical1.png) | ![Supercritical percolation on {3,7}, 2.5x threshold](figure_poincare_percolation_supercritical2.png) |
 
 Loop content is visibly a bulk/supercritical phenomenon here, not a critical
-one: at p_c only a handful of small, isolated loops survive near the
-boundary, while well above p_c loop content spreads across most of the
-tiling — consistent with `pc_window_check.py`, which finds that a window
-around p_c captures 53% of total H1 persistence at the amenable q = 6 point
-but under 0.01% by q = 20. Exact vertex placement is via `hyperbolic_layout.py`,
-which re-orients the triangulation's face list consistently and composes
-hyperbolic isometries — verified to ~1e-14 edge-length error through ring 5.
-See `figure_poincare_percolation.py`.
+one: at ring 4 the critical draw shows only a single small loop, while well
+above p_c loop content spreads across most of the tiling — consistent with
+`pc_window_check.py`, which finds that a window around p_c captures 53% of
+total H1 persistence at the amenable q = 6 point but under 0.01% by q = 20.
+Exact vertex placement is via `hyperbolic_layout.py`, which re-orients the
+triangulation's face list consistently and composes hyperbolic isometries —
+verified to ~1e-14 edge-length error through ring 5. See
+`figure_poincare_percolation.py`.
+
+**Is the sparse critical picture just a small-N artifact?** Mostly, yes — but
+checking that directly turns up something else worth knowing. `pc_ring_scan.py`
+tracks β₁(p_c) of the flag complex (Gaussian elimination over GF(2), same as
+above) across increasing ring depth, 8 percolation draws per depth:
+
+| rings | N | occupied edges | filled triangles | β₁(p_c) | β₁(p_c)/N |
+|-------|-------|-----------------|-------------------|-------------------|-----------|
+| 4 |    232 |     107 |     3 | 0.50 ± 0.50  | 0.00216 ± 0.00216 |
+| 5 |    617 |     290 |     7 | 0.88 ± 0.33  | 0.00142 ± 0.00054 |
+| 6 |  1,625 |     784 |    19 | 4.50 ± 1.94  | 0.00277 ± 0.00119 |
+| 7 |  4,264 |   2,041 |    50 | 12.88 ± 4.04 | 0.00302 ± 0.00095 |
+| 8 | 11,173 |   5,317 |   123 | 39.12 ± 4.73 | 0.00350 ± 0.00042 |
+| 9 | 29,261 |  13,899 |   322 | 99.12 ± 10.60| 0.00339 ± 0.00036 |
+
+β₁(p_c)/N does not decay — it stabilizes around 0.003–0.0035 per vertex by
+ring 7–9. At N = 232 the expected loop count is only ≈ 0.5, so the ring-4
+critical figure above was close to a coin flip on showing any loop at all;
+loop density at p_c is small but genuinely nonzero, not vanishing.
+
+Redrawing the critical case at ring 8 (N = 11,173) confirms this directly —
+31 independent H1 classes are now visible — but also shows why the ring-4
+picture looks empty in the middle regardless of sample size:
+
+![Critical percolation on {3,7} at ring 8, showing loop content concentrated near the boundary](figure_poincare_percolation_ring8_critical.png)
+
+Loop content is now clearly visible, but almost entirely packed along the
+outermost ring, with the interior carrying little but a few long, thin,
+tree-like strands. This isn't a second small-sample effect: it's Finding 5's
+boundary fraction, b/V → 1 − 1/λ(q), which for q = 7 (λ ≈ 2.618) means
+roughly 62% of *all* vertices sit on the single outermost ring at any finite
+depth. The "empty" interior isn't low-density; it's low-*population* — most
+of the graph's vertices live at the rim by construction, in a way that has
+nothing to do with p or with curvature specifically, so any Poincaré-disk
+rendering of a deep-enough {3,q} tiling will look rim-dominated regardless
+of ring depth. See `pc_ring_scan.py` / `figure_poincare_percolation_ring8.py`.
 
 ---
 
