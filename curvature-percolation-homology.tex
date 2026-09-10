@@ -42,7 +42,19 @@ Bond percolation defines a natural filtration. Given a graph $G$, assign each ed
 
 One technical condition makes this tractable: as long as the graph's only 3-cliques are genuine faces of the underlying triangulation (no ``accidental'' triangles among mutually adjacent vertices that don't bound a real 2-cell), the clique complex reconstructs the correct 2-cell structure automatically. This was verified computationally for every lattice used below (Euler characteristic exactly 1 in each case, confirming a topological disk, and an exact match between the graph's 3-cliques and the known face list, with zero spurious or missing triangles).
 
-One subtlety matters again in \S\ref{sec:identity}. A single triangular face's own 3-cycle is born, in this filtration, only once all three of its edges are present, which is also the threshold at which the 2-simplex fills it in. Isolated triangle loops are therefore born and die simultaneously and contribute zero persistence; whatever loop content survives has to come from cycles spanning more than one face.
+One subtlety matters again in \S\ref{sec:identity}. A single triangular face's own 3-cycle is born, in this filtration, only once all three of its edges are present, which is also the threshold at which the 2-simplex fills it in. Isolated triangle loops are therefore born and die simultaneously and contribute zero persistence; whatever loop content survives has to come from cycles spanning more than one face. Figure~\ref{fig:poincare} shows what this looks like on $\{3,7\}$ at four occupation probabilities: the filled triangles are shaded, and the highlighted cycles are a basis for $H_1$ of the flag complex at that $p$, so a fully occupied triangle on its own is never highlighted.
+
+\begin{figure}[htbp]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.48\textwidth]{figure_poincare_percolation_subcritical.png} &
+\includegraphics[width=0.48\textwidth]{figure_poincare_percolation.png} \\
+\includegraphics[width=0.48\textwidth]{figure_poincare_percolation_supercritical1.png} &
+\includegraphics[width=0.48\textwidth]{figure_poincare_percolation_supercritical2.png}
+\end{tabular}
+\caption{The $\{3,7\}$ tiling to ring 4 ($V=232$) in the Poincar\'{e} disk, with every edge drawn as a hyperbolic geodesic, under bond percolation at $p=0.10$, $0.20$, $0.30$, and $0.50$ (top left to bottom right; the bond threshold is $p_c\approx0.199$). Gray: the full tiling. Black: occupied edges. Pink: triangles with all three edges occupied, which the flag complex fills in. Red: a basis for $H_1$ of the flag complex, computed as the cycle space of the occupied graph modulo the boundaries of the filled triangles. At this small size the critical draw happens to carry a single loop; loop density per vertex at $p_c$ is small but nonzero, and grows with $p$ well past the threshold, which is the regime that dominates the integrated quantity studied in \S\ref{sec:partA}.}
+\label{fig:poincare}
+\end{figure}
 
 \section{The $\{3,q\}$ tilings and their ring structure}
 \label{sec:curvature-knob}
