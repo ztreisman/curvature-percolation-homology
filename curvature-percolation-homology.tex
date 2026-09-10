@@ -12,7 +12,7 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{xurl}
 
-\title{Curvature-tuned persistent homology of percolation complexes on $\{3,q\}$ tilings}
+\title{Persistent homology of percolation complexes on $\{3,q\}$ tilings}
 \author{Zachary Treisman}
 \date{\today}
 
@@ -21,30 +21,30 @@
 \maketitle
 
 \begin{abstract}
-A percolation cluster on an exponentially growing graph is a random subgraph whose loop content can be substantial. Representing it faithfully, whether combinatorially as a filtered simplicial complex or concretely as coordinates in a vector space, costs something whenever the cluster is not a tree. This paper measures that cost as a function of curvature, using the regular $\{3,q\}$ triangle tilings as a one-parameter family running from flat and amenable ($q=6$) to deeply hyperbolic ($q=20$). A single growth-rate parameter $\lambda(q)$ governs every result below. Total persistent $H_1$ of the bond-percolation complex on these tilings collapses onto a closed-form law in $1/\lambda(q)$. An identity that reduces total loop persistence to the weight of the lattice's minimum spanning tree, minus a provably exact boundary correction, turns most of that law from a fit into a derivation, and finite-size convergence itself splits cleanly along the amenable/nonamenable line. Whether the same suppression survives once a percolation cluster is embedded into a vector space and fed to a trained model is a natural next question; a preliminary embedding-and-sparse-autoencoder pipeline is sketched as future work rather than reported as a settled result here.
+We study the homology of percolation clusters on disk-shaped patches of the regular $\{3,q\}$ triangle tilings for $q\ge7$. Varying $q$ gives a one-parameter family of hyperbolic tilings, from mildly curved ($q=7$) to deeply hyperbolic ($q=20$), and this paper measures and derives loop content as a function of curvature. A single growth-rate parameter $\lambda(q)$, the asymptotic ratio of successive ring sizes, governs every result. Total persistent $H_1$ of the bond-percolation complex, per vertex, is measured across $q=7,\dots,20$ and found to be a nearly linear function of $1/\lambda(q)$. An exact identity reduces total loop persistence to the weight of the lattice's minimum spanning tree minus a boundary correction. The boundary correction follows from the ring recursion, and the spanning-tree weight is derived by attaching rings one at a time to a contracted interior, with a first-order correction for loops that close through the ring outside. The resulting formula has no free parameters, gives the large-curvature intercept in closed form as $5/4-2\pi/(3\sqrt3)$, and reproduces the measured values to within their uncertainties. Whether the same relation between curvature and homology survives once a percolation cluster is embedded into a vector space and fed to a trained model is a natural next question; a preliminary embedding-and-sparse-autoencoder pipeline is sketched as work in progress.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
-A tree embeds into a vector space with zero distortion: a branching random walk, or any construction that assigns each node the cumulative sum of independent steps along its unique path from a root, reproduces the tree's own path metric exactly. This is one reason hierarchical data is so often modeled as, or embedded via, tree structure: Poincar\'{e} embeddings place hierarchies in hyperbolic space specifically to preserve tree distances \citep{nickel2017}, and synthetic data models are sometimes built directly from percolation clusters on the assumption that those clusters are themselves close to tree-shaped. But most naturally occurring branching structures are not exactly trees. A percolation cluster is a random subgraph of some ambient graph, and whether it looks tree-like depends on how likely random paths within it are to reconnect and close a loop. When they do, an embedding built on the tree assumption pays for it: coordinates that would agree if the cluster really were a tree instead disagree by however much the loop's holonomy fails to close.
+Hierarchical data is often modeled as, or embedded via, tree structure. Hyperbolic embeddings such as Poincar\'{e} or Lorentz embeddings place hierarchies in hyperbolic space specifically to preserve tree distances \citep{nickel2017}. With this context, we study the interaction between two considerations that should be taken into account when modeling real data. First, many naturally occurring branching structures are not trees. Connections can exist between downstream nodes independent of heritage. Second, restrictions on possibility and the results of random chance lead us to consider random subgraphs of an underlying graph. Percolation is the process of constructing these random subgraphs. So we study the topology of percolated subgraphs of graphs that embed in hyperbolic space, with a goal being to measure the cost of using an embedding built on the assumption that data are tree-like. Coordinates representing two paths to the same data point, embedded with a tree-like assumption, will disagree by however much the loop's holonomy fails to close.
 
-This cost is intuitive but rarely turned into a measurable quantity for a specific graph family. This paper does that, using the regular hyperbolic tilings $\{3,q\}$ (equilateral-triangle tessellations with $q$ triangles meeting at every vertex) as a curvature dial. Varying $q$ from $6$ (flat, amenable) through increasingly negatively curved values interpolates continuously between loop-rich and asymptotically tree-like percolation behavior, through a single, computable growth-rate parameter $\lambda(q)$ (\S\ref{sec:curvature-knob}). $\lambda(q)=1$ at $q=6$ and $\lambda(q)>1$ for every $q\ge7$, so this dial sits directly on top of the amenable/nonamenable distinction that governs whether percolation on the tiling exhibits mean-field critical behavior \citep{hutchcroft2019}: it is tied to a known, provable threshold, not chosen arbitrarily.
+This cost is intuitive but rarely turned into a measurable quantity for a specific graph family. This paper does that, using the regular hyperbolic tilings $\{3,q\}$ (equilateral-triangle tessellations with $q$ triangles meeting at every vertex) as a curvature dial. Varying $q$ from $7$ upward interpolates between loop-rich and more tree-like percolation behavior, through a single computable growth-rate parameter $\lambda(q)$ (\S\ref{sec:curvature-knob}). The flat triangular lattice $q=6$ is the boundary of this family, with $\lambda(6)=1$; it is excluded here for reasons given in \S\ref{sec:curvature-knob}.
 
-Section~\ref{sec:partA} treats loop content as a property of the abstract combinatorial object. Bond percolation is built as a single filtered simplicial complex, and its total persistent $H_1$ (summed bar length across the whole percolation process, per vertex) is measured across twelve values of $q$ and a range of system sizes per $q$. The result is a closed-form law in $1/\lambda(q)$, and an identity turns most of that law into a derivation rather than a fit: total $H_1$ persistence reduces algebraically to the weight of the lattice's minimum spanning tree minus a boundary correction, and the boundary correction alone can be shown to carry a $1/\lambda(q)$ dependence with a derived coefficient. Finite-size convergence turns out to split cleanly at the amenable/nonamenable line as well, a second, unanticipated confirmation of the same boundary.
+Section~\ref{sec:partA} treats the topology of the percolated complex. Bond percolation defines a filtered simplicial complex, and its total persistent $H_1$ (summed bar length across the whole percolation process, per vertex) is measured across eleven values of $q$. The main result is a derivation of that quantity. An exact identity reduces total $H_1$ persistence to the weight of the lattice's minimum spanning tree minus a boundary correction. The boundary correction is a consequence of the ring recursion that defines $\lambda(q)$. The spanning-tree weight is derived by attaching rings one at a time to a contracted interior, which reduces it to a percolation calculation on a cycle with spokes, plus a first-order correction for the rare but systematic loops that close through the ring outside. The formula that results has no adjustable parameters and matches the measurements at every $q$ to within their uncertainties. In particular it explains why the measured values are so close to linear in $1/\lambda(q)$: the expansion parameter of the derivation is $1/\lambda(q)$ itself.
 
-Section~\ref{sec:diagnostic} sets up persistent homology as the diagnostic used throughout. Section~\ref{sec:curvature-knob} defines the curvature dial and its growth rate $\lambda(q)$. Section~\ref{sec:partA} presents the main result. Section~\ref{sec:brill} discusses one concrete application: percolation-based synthetic data models for mechanistic interpretability research, which rely on the same tree-likeness assumption measured here, currently justified only asymptotically in ambient dimension. Section~\ref{sec:partB} sketches a natural extension of this work -- embedding percolated clusters into vector space and testing whether the same suppression reaches a trained model's own features -- as a direction for future work rather than a settled result.
+Section~\ref{sec:diagnostic} sets up persistent homology as the diagnostic used throughout. Section~\ref{sec:curvature-knob} defines the family, its growth rate $\lambda(q)$, and the two combinatorial facts about ring structure the derivation depends on. Section~\ref{sec:partA} contains the derivation and the measurements. Section~\ref{sec:brill} discusses one concrete application: percolation-based synthetic data models for mechanistic interpretability research, which rely on the same tree-likeness assumption measured here. Section~\ref{sec:partB} sketches a natural extension: embedding percolated clusters into vector space and testing whether the same suppression reaches a trained model's own features.
 
 \section{Persistent homology as the diagnostic}
 \label{sec:diagnostic}
 
-Bond percolation defines a natural filtration. Given a graph $G$, assign each edge $e\in G$ an i.i.d.\ Uniform$[0,1]$ occupation threshold $u_e\in[0,1]$, and build the clique (flag) complex of the graph using those thresholds as filtration values. Declare edge $e$ occupied at parameter $p$ whenever its threshold $u_e\le p$, and declare 2-simplices occupied wherever a triangle's three edges are all present. A triangle enters the filtration at the maximum of its three edge thresholds. Reusing the same draw of thresholds across all $p$ makes the occupied sets nested: one draw of $\{u_e\}$ gives a single filtration that encodes the entire coupled percolation process across every value of $p$. Standard persistent homology software (here, GUDHI) extracts persistent $H_0$ and $H_1$ from that one filtration directly, as Betti curves $\beta_0(p)$, $\beta_1(p)$ and persistence diagrams whose bars record when each loop is born and when it gets filled in. Any single draw of $\{u_e\}$ is still one sample path, and the resulting curves fluctuate from draw to draw. The results below average over 12 independent draws per lattice, with the reported spread reflecting that realization-to-realization variation. This connects to existing work on homological percolation, which studies the birth and death of giant cycles in percolation processes via the Euler characteristic curve on cubical and other lattices \citep{bobrowski2020}; the approach here specializes to the $\{3,q\}$ triangulated case and adds curvature as an explicit parameter.
+Bond percolation defines a natural filtration. Given a graph $G$, assign each edge $e\in G$ an i.i.d.\ Uniform$[0,1]$ occupation threshold $u_e\in[0,1]$, and build the clique (flag) complex of the graph using those thresholds as filtration values. Declare edge $e$ occupied at parameter $p$ whenever its threshold $u_e\le p$, and declare 2-simplices occupied wherever a triangle's three edges are all present. A triangle enters the filtration at the maximum of its three edge thresholds. Reusing the same draw of thresholds across all $p$ makes the occupied sets nested: one draw of $\{u_e\}$ gives a single filtration that encodes the entire coupled percolation process across every value of $p$. Standard persistent homology software (here, GUDHI) extracts persistent $H_0$ and $H_1$ from that one filtration directly, as Betti curves $\beta_0(p)$, $\beta_1(p)$ and persistence diagrams whose bars record when each loop is born and when it gets filled in. Any single draw of $\{u_e\}$ is still one sample path, and the resulting curves fluctuate from draw to draw. The measurements below average over 12 independent draws per lattice, with the reported spread reflecting that realization-to-realization variation. This connects to existing work on homological percolation, which studies the birth and death of giant cycles in percolation processes via the Euler characteristic curve on cubical and other lattices \citep{bobrowski2020}; the approach here specializes to the $\{3,q\}$ triangulated case and adds curvature as an explicit parameter.
 
 One technical condition makes this tractable: as long as the graph's only 3-cliques are genuine faces of the underlying triangulation (no ``accidental'' triangles among mutually adjacent vertices that don't bound a real 2-cell), the clique complex reconstructs the correct 2-cell structure automatically. This was verified computationally for every lattice used below (Euler characteristic exactly 1 in each case, confirming a topological disk, and an exact match between the graph's 3-cliques and the known face list, with zero spurious or missing triangles).
 
-One subtlety matters again in \S\ref{sec:partA-derivation}. A single triangular face's own 3-cycle is born, in this filtration, only once all three of its edges are present, which is also the threshold at which the 2-simplex fills it in. Isolated triangle loops are therefore born and die simultaneously and contribute zero persistence; whatever loop content survives has to come from cycles spanning more than one face.
+One subtlety matters again in \S\ref{sec:identity}. A single triangular face's own 3-cycle is born, in this filtration, only once all three of its edges are present, which is also the threshold at which the 2-simplex fills it in. Isolated triangle loops are therefore born and die simultaneously and contribute zero persistence; whatever loop content survives has to come from cycles spanning more than one face.
 
-\section{Percolation on $\{3,q\}$ tilings}
+\section{The $\{3,q\}$ tilings and their ring structure}
 \label{sec:curvature-knob}
 
 The family of regular triangulations $\{3,q\}$ ($q$ equilateral triangles meeting at every vertex) is built by the standard ring-growth construction: starting from a single vertex, each successive ring is attached according to the fixed combinatorial rule that $q$ triangles meet at every vertex. Ring sizes satisfy the linear recursion
@@ -55,164 +55,27 @@ whose dominant root
 \[
 \lambda(q) = \frac{(q-4) + \sqrt{(q-4)^2-4}}{2}
 \]
-is the tiling's asymptotic per-ring growth rate, $rc[n]/rc[n-1]\to\lambda(q)$ as $n\to\infty$. At $q=6$ the discriminant vanishes, giving a repeated root $\lambda=1$ and linear, rather than exponential, ring growth: the flat, parabolic case. For $q\ge7$ the discriminant is positive and $\lambda>1$, giving exponential growth. Table~\ref{tab:ladder} gives illustrative values.
+is the tiling's asymptotic per-ring growth rate, $rc[n]/rc[n-1]\to\lambda(q)$ as $n\to\infty$. For $q\ge7$ the discriminant is positive and $\lambda>1$, giving exponential growth. Table~\ref{tab:ladder} gives illustrative values. Everything below uses the identity $\lambda^2=(q-4)\lambda-1$, which is just the characteristic equation of the recursion.
 
 \begin{table}[htbp]
 \centering
-\begin{tabular}{lllr}
+\begin{tabular}{llr}
 \toprule
-$q$ & geometry & amenable? & $\lambda(q)$ \\
+$q$ & geometry & $\lambda(q)$ \\
 \midrule
-6  & flat (Euclidean triangular lattice) & yes & 1.000 \\
-7  & mildly hyperbolic & no & 2.618 \\
-8  & more hyperbolic & no & 3.732 \\
-12 & strongly hyperbolic & no & 8.873 \\
-20 & deep hyperbolic & no & 17.944 \\
+7  & mildly hyperbolic & 2.618 \\
+8  & more hyperbolic & 3.732 \\
+12 & strongly hyperbolic & 8.873 \\
+20 & deep hyperbolic & 17.944 \\
 \bottomrule
 \end{tabular}
-\caption{The curvature ladder: illustrative values of $q$, from flat to deeply hyperbolic.}
+\caption{Illustrative values of the growth rate $\lambda(q)$.}
 \label{tab:ladder}
 \end{table}
 
-For this specific family, regular $\{3,q\}$ tilings, which are Gromov-hyperbolic and quasi-transitive for $q\ge7$, the growth dichotomy is equivalent to amenability, not just correlated with it: a hyperbolic, quasi-transitive graph is amenable if and only if it is elementary (virtually cyclic), and elementary graphs are the ones with at most linear growth, so $\lambda(q)=1$ versus $\lambda(q)>1$ is the amenable/nonamenable distinction for this family. That equivalence is special to this family, though, not a general fact about growth rate and amenability; some amenable groups, such as the lamplighter group, also grow exponentially.
+Two consequences of the recursion do all the work in \S\ref{sec:partA}.
 
-This dichotomy matters for percolation specifically because, on any nonamenable, Gromov-hyperbolic, quasi-transitive graph, there is a phase with infinitely many infinite clusters between two distinct critical probabilities $p_c<p_u$, and the critical exponents at $p_c$ provably take their mean-field, i.e.\ Bethe-lattice, values (Benjamini \& Schramm's conjecture, proved by Tom Hutchcroft \citep{hutchcroft2019}; see also H\"aggstr\"om's survey of Schramm's percolation work \citep{haggstrom}). On the $\{7,3\}$ hyperbolic lattice, concretely, the percolation cluster-size scaling exponent $\tau$ has already been measured to converge to its mean-field value of $5/2$ \citep{mertens2017}. Hyperbolic lattices are mean-field not because of dimension but because non-amenability forces the same ``loops are rare'' structure that high dimension forces in Euclidean space.
-
-The $\{3,q\}$ family therefore gives a single, precisely defined, geometrically interpretable parameter that interpolates between loop-rich (Euclidean, $q=6$) and asymptotically tree-like (deep hyperbolic, $q\to\infty$) percolation regimes: one integer, measurable on graphs small enough to simulate directly.
-
-\section{The topological loop content of percolated subsets}
-\label{sec:partA}
-
-\subsection{Method and validation}
-
-The $\{3,q\}$ graphs used here were built via the ring-growth construction of \S\ref{sec:curvature-knob}. Running it to ring 5 for $q=7$ gives a graph with 617 vertices and 847 faces, an Euler characteristic of exactly 1, confirming the graph is a topological disk, and an exact match between the graph's triangle cliques and its true face list, confirming no spurious triangles. The flat $q=6$ control is a finite patch of the ordinary triangular lattice; the $q=8$ case uses the same construction at one ring fewer (609 vertices), chosen so all three lattices are closely matched in size.
-
-For each lattice, 12 independent percolation realizations (random edge filtrations) were run through the filtered-complex pipeline, and the resulting Betti curves and total persistent-$H_1$ (``loopiness'') statistics were averaged. As a sanity check, the flat lattice's $\beta_0(p)$ crossover lands almost exactly on the lattice's known exact bond-percolation threshold ($p_c\approx0.347$ for the triangular lattice), confirming the pipeline reproduces standard percolation behavior before any curvature is introduced.
-
-\subsection{The scaling law}
-\label{sec:scaling-law}
-
-Figure~\ref{fig:euclidean} (\texttt{euclidean\_control\_betti\_curves.png}) shows $\beta_0/N$ and $\beta_1/N$ for the flat control, with the loop-density curve peaking near $p\approx0.7$ and the fragmentation transition crossing the known exact threshold.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{euclidean_control_betti_curves.png}
-\caption{Betti curves $\beta_0/N$ and $\beta_1/N$ for the flat ($q=6$) control lattice.}
-\label{fig:euclidean}
-\end{figure}
-
-Figure~\ref{fig:comparison} (\texttt{curvature\_persistence\_comparison.png}) is a pilot demonstration at matched system size: the same $\beta_1/N$ curves for $q=6,7,8$ overlaid, and total $H_1$ persistence per vertex plotted against $q$:
-
-\begin{itemize}
-\item $q=6$ (flat): $0.160\pm0.007$ total $H_1$ persistence per vertex
-\item $q=7$ ($\{3,7\}$): $0.089\pm0.005$
-\item $q=8$: $0.076\pm0.002$
-\end{itemize}
-
-Loop persistence per vertex falls by roughly 45\% moving from flat to $\{3,7\}$, and continues to fall monotonically and well outside error bars as curvature increases further.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{curvature_persistence_comparison.png}
-\caption{$\beta_1/N$ curves for $q=6,7,8$ overlaid, and total $H_1$ persistence per vertex versus $q$.}
-\label{fig:comparison}
-\end{figure}
-
-A full sweep extends this three-point demonstration to twelve values of $q$ (6 through 20) and, for each $q$, several ring depths spanning roughly two orders of magnitude in system size, from a few hundred vertices up to tens of thousands, to get an explicit scaling law rather than a single matched-size snapshot. Figure~\ref{fig:scaling} (\texttt{curvature\_scaling\_law.png}) shows the result. Using each $q$'s largest available system size (for $q=6$, its converged large-$N$ asymptote from \S\ref{sec:convergence}, since raw sweep sizes for $q=6$ do not converge at any practical ring depth), total $H_1$ persistence per vertex follows
-\[
-0.0381 + \frac{0.1477}{\lambda(q)}, \qquad R^2=0.9982,
-\]
-with $\lambda(q)$ as defined in \S\ref{sec:curvature-knob}. The fit has a natural reading: the intercept is a curvature-independent floor, and the $1/\lambda$ term captures everything curvature suppresses, decaying at the tiling's own growth rate. \S\ref{sec:partA-derivation} turns this reading into a derivation, and \S\ref{sec:brill} returns to what the intercept can and cannot be interpreted as.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{curvature_scaling_law.png}
-\caption{Total $H_1$ persistence per vertex versus $q$: the all-twelve fit (dotted) versus the hyperbolic-only fit excluding $q=6$ (dashed); $q=6$ sits visibly above the hyperbolic trend's extrapolation (left, \S\ref{sec:q6-outlier}). Finite-size convergence for $q=6,8,14$ (right).}
-\label{fig:scaling}
-\end{figure}
-
-\subsubsection{Is $\lambda(q)$ really the right variable?}
-\label{sec:results-check}
-
-A fit this good, with two free parameters over twelve points, invites a simple objection: perhaps any sufficiently flexible decreasing function of $q$ would fit about as well, and $\lambda(q)$'s appearance is an artifact of the fitting range rather than a meaningful choice of variable. This is checkable directly: refit the same two-parameter form, intercept $+$ slope$\,\times f(q)$, against several structurally motivated alternatives to $f(q)=1/\lambda(q)$, and compare $R^2$.
-
-\begin{table}[htbp]
-\centering
-\begin{tabular}{lr}
-\toprule
-$f(q)$ & $R^2$ \\
-\midrule
-$1/\lambda(q)$ \emph{(used above)} & 0.9982 \\
-$1/\lambda(q)^2$                    & 0.9670 \\
-$1/(q-4)$                           & 0.8849 \\
-$1/(q\cdot(q+1))$ (naive one-loop-per-vertex guess) & 0.7950 \\
-$1/q^2$                             & 0.8098 \\
-$1/q$                               & 0.6962 \\
-$e^{-q/5}$                          & 0.6914 \\
-\bottomrule
-\end{tabular}
-\caption{$R^2$ for the same two-parameter fit against alternative variables. $1/\lambda(q)$ is not just the best of these; it clears its closest structural cousin, $1/(q-4)$ (which $\lambda(q)$ asymptotically approaches as $q\to\infty$), by a wide margin.}
-\label{tab:altfit}
-\end{table}
-
-Table~\ref{tab:altfit} rules out the objection: if the truth here were simply some smooth decreasing function of $q$, several of these alternatives should score comparably. None do. $\lambda(q)$ is also not an arbitrary choice of variable. It is the tiling's exponential growth rate, the same spectral-radius-type quantity that governs generating-function asymptotics (return probabilities, Green's functions) on these graphs, and the quantity Hutchcroft's mean-field theorem hinges on via non-amenability; \S\ref{sec:partA-derivation} makes this connection precise instead of structural.
-
-\subsection{Finite-size convergence splits at the amenability boundary}
-\label{sec:convergence}
-
-A second finding was not anticipated going in: finite-size convergence itself splits cleanly along the amenable/nonamenable line. Every nonamenable $q$ tested (7 and up) converges to within 1--2\% almost immediately and stays flat out to systems of tens of thousands of vertices, while $q=6$ drifts upward by more than 3\% between the two largest sizes tested in the original sweep ($N=1951$ to $N=4921$). This is an empirical fingerprint of the isoperimetric distinction at the heart of the Benjamini--Schramm/Hutchcroft result: nonamenable graphs have boundary scaling with volume, so finite-size corrections decay fast; amenable graphs don't have that control, so they don't.
-
-Because the $\{3,q\}$ tilings are deterministic given $q$ and ring depth, the only randomness in this pipeline is the percolation thresholds, averaged over properly at every point. For $q=6$ specifically, this was pushed far beyond the original sweep: seven additional ring depths, up to ring $1000$ ($N\approx3.00\times10^6$), with 8--15 percolation draws per size, parallelized across independent realizations. The combined series, $N=127$ to $N=3{,}003{,}001$, fits cleanly to a power-law approach to a finite asymptote,
-\[
-H_1/\text{vertex}(N) = A - B/N^\alpha, \qquad A=0.18757\pm0.00034,\ B=0.4164\pm0.0266,\ \alpha=0.4453\pm0.0129 \quad (R^2=0.9988).
-\]
-So $q=6$ does converge; it simply needs roughly $1000\times$ the vertex count that any hyperbolic $q$ needs, consistent with amenable finite-size corrections decaying as a power of $N$ rather than exponentially fast. The fitted exponent $\alpha\approx0.445$ is close to, though not an exact match for, the $1/\sqrt N$ perimeter-to-area ratio expected of a 2-dimensional disk of $N$ vertices ($\sim4\sigma$ from $1/2$). $A$ is the value used for $q=6$ throughout this paper.
-
-\subsection{$q=6$'s position relative to the hyperbolic trend}
-\label{sec:q6-outlier}
-
-$q=6$ is the family's only amenable ($\lambda=1$) point, and it sits at extreme leverage in this fit: $1/\lambda=1$ for $q=6$, versus $1/\lambda\in[0.05,0.38]$ for every hyperbolic $q$ tested. The twelve-point $R^2$ alone should not be trusted without checking this directly. Refitting using only the eleven hyperbolic points ($q\ge7$) gives an \emph{even tighter} law,
-\[
-H_1/\text{vertex} = 0.0404 + \frac{0.1316}{\lambda(q)}, \qquad R^2=0.9995 \quad (\text{vs.\ }0.9982\text{ for all twelve}),
-\]
-and extrapolating this hyperbolic-only trend to $\lambda=1$ predicts $H_1/\text{vertex}(6)=0.1721$, which is $0.0155$ below the actual converged value, $0.18757\pm0.00034$ (\S\ref{sec:convergence}): a gap roughly $45$ times the asymptote's uncertainty, too large to be measurement noise (Figure~\ref{fig:scaling}).
-
-This gap is informative rather than a defect in the fit. $q=6$ is the family's unique amenable/parabolic case, and \S\ref{sec:convergence} already showed it behaves qualitatively differently from every hyperbolic $q$ at finite size. \S\ref{sec:partA-derivation}'s decomposition explains why, and checks it independently: the boundary term contributes $-\tfrac14+\tfrac{1}{4\lambda(q)}$, which vanishes identically at $\lambda=1$. In the $N\to\infty$ limit, then, $H_1$/vertex at $q=6$ equals $\mu(6)$ with \emph{zero} boundary correction, so any $q=6$ deviation from the hyperbolic trend has to live entirely in the bulk term. \S\ref{sec:partA-derivation} confirms that this is exactly what happens.
-
-\subsection{Deriving the law: an exact identity}
-\label{sec:partA-derivation}
-
-A fit this clean (\S\ref{sec:scaling-law}, $R^2=0.9982$) demands an explanation rather than an appeal to curve-fitting. This section derives one, as far as it goes: the $1/\lambda(q)$ dependence splits into a boundary contribution that is now a proven consequence of the ring-count recursion, and a bulk contribution that is not.
-
-\subsubsection{An exact identity}
-
-Because the percolation complex is a triangulated topological disk (\S\ref{sec:diagnostic}), $\beta_2(p)=0$ identically: a 2-dimensional complex only carries an $H_2$ class around a genuine enclosed void, which requires a closed surface, and a disk's boundary is never closed. Consequently the Euler characteristic $\chi(p)=N-E(p)+F(p)$ (vertices are present at every $p$; $E(p),F(p)$ count edges and triangles occupied by threshold $p$) satisfies $\chi(p)=\beta_0(p)-\beta_1(p)$ exactly, at every $p$, giving
-\[
-\beta_1(p) = \beta_0(p) - N + E(p) - F(p).
-\]
-Total $H_1$ persistence is $\int_0^1\beta_1(p)\,dp$, literally the area under the loop-density curve of Figure~\ref{fig:euclidean}. Integrating term by term: writing $u_e$ for edge $e$'s occupation threshold, $E(p)=\sum_e\mathbb{1}[u_e\le p]$ gives $\int_0^1E(p)\,dp=\sum_e(1-u_e)$; writing $m_t=\max(\text{the three edge thresholds of triangle }t)$ for its occupation threshold, $\int_0^1F(p)\,dp=\sum_t(1-m_t)$.
-
-The $\beta_0(p)$ term is the classical single-linkage/Kruskal fact: the connected-component structure of the graph restricted to edges with $u_e\le p$ is, for every $p$, identical to the component structure using only the edges of the graph's minimum spanning tree (MST, the subset of $N-1$ edges connecting all vertices at minimum total weight, built greedily by Kruskal's algorithm in increasing weight order) with weight $\le p$. So $N-\beta_0(p)$ equals the number of MST edges with weight $\le p$, and $\int_0^1\beta_0(p)\,dp = 1+w_{\mathrm{MST}}$, where $w_{\mathrm{MST}}=\sum_{e\in\mathrm{MST}}u_e$.
-
-Assembling the pieces gives an exact identity, not an approximation and not only in expectation, for a single percolation realization:
-\begin{equation}
-\int_0^1\beta_1(p)\,dp = w_{\mathrm{MST}} - \sum_e u_e + \sum_t m_t.
-\label{eq:exact-identity}
-\end{equation}
-This was checked directly against the GUDHI pipeline: for a $\{3,7\}$ lattice at ring depth 5 ($N=617$), the right-hand side of \eqref{eq:exact-identity} matches GUDHI's computed total $H_1$ persistence to floating-point precision ($10^{-12}$).
-
-\subsubsection{Reduction to two graph-theoretic quantities}
-
-Taking expectations, $\mathbb{E}[u_e]=\tfrac12$ and $\mathbb{E}[m_t]=\tfrac34$ (the mean of the maximum of three i.i.d.\ Uniform$[0,1]$ variables), so $\mathbb{E}\big[\sum_e u_e\big]=E_{\mathrm{tot}}/2$ and $\mathbb{E}\big[\sum_t m_t\big]=3F_{\mathrm{tot}}/4$, where $E_{\mathrm{tot}},F_{\mathrm{tot}}$ are the lattice's total edge and face counts. Writing $b$ for the number of boundary edges (edges bounding only one triangular face, the disk's outer rim), Euler's formula together with the disk's face structure gives the exact relations $E_{\mathrm{tot}}=3V-3-b$ and $F_{\mathrm{tot}}=2V-2-b$. Substituting into \eqref{eq:exact-identity} in expectation:
-\begin{equation}
-\mathbb{E}\left[\int_0^1\beta_1(p)\,dp\right] = \mathbb{E}[w_{\mathrm{MST}}] - \frac{b}{4}.
-\label{eq:reduced-identity}
-\end{equation}
-Both terms are now purely graph-theoretic: $b$ is deterministic and directly countable from the tiling's combinatorics, and $\mathbb{E}[w_{\mathrm{MST}}]$ is the expected weight of a minimum spanning tree under i.i.d.\ Uniform$[0,1]$ edge weights.
-
-\subsubsection{The boundary term: a proven $1/\lambda$ effect}
-
-The boundary term already produces the $1/\lambda$ mechanism directly, and provably. Ring sizes satisfy the same linear recursion that defines $\lambda(q)$, so the total vertex count $V=1+\sum_n rc[n]$ is a geometric series dominated by its last term for $\lambda>1$: $b/V\to rc[R]/V\to1-1/\lambda(q)$ as ring depth $R\to\infty$. This was confirmed numerically to four decimal places already at $V\sim10^3$--$10^4$ (Table~\ref{tab:boundary}). Substituted into \eqref{eq:reduced-identity}, this alone contributes a term $-\tfrac14+\tfrac{1}{4\lambda(q)}$ to $H_1$ persistence per vertex: a genuine $1/\lambda$ dependence, with a derived coefficient of exactly $1/4$.
+\paragraph{The outermost ring is a fixed fraction of the disk.} The total vertex count $V=1+\sum_n rc[n]$ is a geometric series dominated by its last term, so the number $b$ of boundary edges (edges bounding only one face) satisfies $b/V\to1-1/\lambda(q)$ as the ring depth grows. Table~\ref{tab:boundary} shows this is already accurate to four decimal places at $V\sim10^3$. A disk of any depth is therefore mostly rim: for $q=7$, $62\%$ of all vertices lie on the outermost ring, and for $q=20$, $94\%$.
 
 \begin{table}[htbp]
 \centering
@@ -220,7 +83,6 @@ The boundary term already produces the $1/\lambda$ mechanism directly, and prova
 \toprule
 $q$ & $V$ & $b/V$ & $1-1/\lambda(q)$ \\
 \midrule
-6  & 1{,}951 & 0.0769 & 0.0000 \\
 7  & 617     & 0.6240 & 0.6180 \\
 8  & 2{,}281 & 0.7330 & 0.7321 \\
 9  & 1{,}306 & 0.7925 & 0.7913 \\
@@ -229,85 +91,190 @@ $q$ & $V$ & $b/V$ & $1-1/\lambda(q)$ \\
 20 & 5{,}441 & 0.9373 & 0.9373 \\
 \bottomrule
 \end{tabular}
-\caption{Boundary-edge fraction versus its predicted large-$N$ limit, at moderate ring depths.}
+\caption{Boundary-edge fraction versus its large-$N$ limit, at moderate ring depths.}
 \label{tab:boundary}
 \end{table}
 
-\subsubsection{The bulk term: an independent $1/\lambda$ law that closes the loop}
+\paragraph{Each ring has two kinds of vertex.} A vertex in ring $n$ is adjacent either to one vertex of ring $n-1$ (call it e-type) or to two (v-type). The v-type vertices are the children shared between adjacent parents: every consecutive pair of vertices in ring $n-1$ has exactly one common child in ring $n$. Counting child slots, an e-type parent has $q-3$ children and a v-type parent $q-4$, and each v-type child absorbs two slots; this gives a recursion for the number $v_n$ of v-type vertices whose fixed point, using $\lambda^2=(q-4)\lambda-1$, is
+\[
+\frac{v_n}{rc[n]} \;\to\; \frac{1}{\lambda(q)}.
+\]
+This was checked directly on the constructed graphs and holds to four decimal places at every $q$ tested. The pattern of e- and v-type vertices around a ring is not random: it is a Sturmian word of slope $1/\lambda(q)$ (the number of distinct length-$L$ subwords is exactly $L+1$), which is what one expects from a construction that is recursive and symmetric about the center. The derivation below treats the pattern as if it were independent per vertex; the error this introduces was computed using the Sturmian structure and is below $10^{-3}$ at $q=7$ and negligible beyond, so the simpler treatment is used.
 
-The derived coefficient, $1/4=0.25$, is larger than \S\ref{sec:scaling-law}'s fitted slope, $0.1477$. Since \eqref{eq:reduced-identity} is exact, this can only mean the remaining bulk term, $\mu(q):=\lim_{V\to\infty}\mathbb{E}[w_{\mathrm{MST}}]/V$, is not itself constant in $q$; if it were, the fitted slope would equal $1/4$ exactly. Because MST weight needs no persistent-homology computation (Kruskal's algorithm alone), $\mu(q)$ can be measured at much larger $N$ than $H_1$ itself, across all twelve $q$ values, with the same power-law finite-size extrapolation used for $q=6$ in \S\ref{sec:convergence}. Table~\ref{tab:mu} shows the result, using each $q$'s largest tested size (up to $N\approx2\times10^6$).
+\paragraph{Why $q=6$ is excluded.} At $q=6$ the recursion has a repeated root $\lambda=1$: ring sizes grow linearly, the boundary fraction $b/V$ tends to zero rather than to a positive constant, and there is no small parameter. Every result in \S\ref{sec:partA} is an expansion in $1/\lambda(q)$, and at $\lambda=1$ that expansion has nothing to expand in. The flat case also behaves differently in a purely practical sense: its per-vertex loop content converges to its large-$N$ limit only as a power law in $N$ (roughly $N^{-0.45}$, needing on the order of $10^6$ vertices for three-figure accuracy), whereas every hyperbolic $q$ is converged to within 1 to 2\% by $10^4$ vertices, consistent with the outermost ring being a fixed fraction of the whole so that adding a ring adds the same per-vertex contribution. The flat lattice is the amenable member of the family and is genuinely a different object; it is not part of this paper.
+
+\paragraph{Criticality is not what is being measured.} For $q\ge7$ the tilings are nonamenable and Gromov-hyperbolic, and percolation on them has mean-field critical behavior \citep{hutchcroft2019,mertens2017}. That is not what governs the quantity studied here. Total persistent $H_1$ integrates $\beta_1(p)$ over all $p\in[0,1]$, and almost none of that integral comes from near the percolation threshold: restricting to a window $[p_c/2,\,2p_c]$ around the bond threshold captures under $5\%$ of the total at $q=7$ and under $0.01\%$ by $q=20$. Loop content in these complexes is a supercritical, bulk phenomenon, and the derivation in \S\ref{sec:partA} never uses critical-point theory.
+
+\section{The topological loop content of percolated subsets}
+\label{sec:partA}
+
+\subsection{An exact identity}
+\label{sec:identity}
+
+Because the percolation complex is a triangulated topological disk (\S\ref{sec:diagnostic}), $\beta_2(p)=0$ identically: a 2-dimensional complex only carries an $H_2$ class around a genuine enclosed void, which requires a closed surface, and a disk's boundary is never closed. Consequently the Euler characteristic $\chi(p)=V-E(p)+F(p)$ (vertices are present at every $p$; $E(p),F(p)$ count edges and triangles occupied by threshold $p$) satisfies $\chi(p)=\beta_0(p)-\beta_1(p)$ exactly, at every $p$, giving
+\[
+\beta_1(p) = \beta_0(p) - V + E(p) - F(p).
+\]
+Total $H_1$ persistence is $\int_0^1\beta_1(p)\,dp$, the area under the loop-density curve. Integrating term by term: writing $u_e$ for edge $e$'s occupation threshold, $E(p)=\sum_e\mathbb{1}[u_e\le p]$ gives $\int_0^1E(p)\,dp=\sum_e(1-u_e)$; writing $m_t=\max(\text{the three edge thresholds of triangle }t)$ for its occupation threshold, $\int_0^1F(p)\,dp=\sum_t(1-m_t)$.
+
+The $\beta_0(p)$ term is the classical single-linkage/Kruskal fact: the connected-component structure of the graph restricted to edges with $u_e\le p$ is, for every $p$, identical to the component structure using only the edges of the graph's minimum spanning tree (MST, the subset of $V-1$ edges connecting all vertices at minimum total weight, built greedily by Kruskal's algorithm in increasing weight order) with weight $\le p$. So $V-\beta_0(p)$ equals the number of MST edges with weight $\le p$, and $\int_0^1\beta_0(p)\,dp = 1+w_{\mathrm{MST}}$, where $w_{\mathrm{MST}}=\sum_{e\in\mathrm{MST}}u_e$.
+
+Assembling the pieces gives an exact identity, not an approximation and not only in expectation, for a single percolation realization:
+\begin{equation}
+\int_0^1\beta_1(p)\,dp = w_{\mathrm{MST}} - \sum_e u_e + \sum_t m_t.
+\label{eq:exact-identity}
+\end{equation}
+This was checked directly against the GUDHI pipeline: for a $\{3,7\}$ lattice at ring depth 5 ($V=617$), the right-hand side of \eqref{eq:exact-identity} matches GUDHI's computed total $H_1$ persistence to floating-point precision ($10^{-12}$).
+
+\subsection{Reduction to a spanning-tree weight and a boundary term}
+\label{sec:boundary}
+
+Taking expectations, $\mathbb{E}[u_e]=\tfrac12$ and $\mathbb{E}[m_t]=\tfrac34$ (the mean of the maximum of three i.i.d.\ Uniform$[0,1]$ variables), so $\mathbb{E}\big[\sum_e u_e\big]=E_{\mathrm{tot}}/2$ and $\mathbb{E}\big[\sum_t m_t\big]=3F_{\mathrm{tot}}/4$, where $E_{\mathrm{tot}},F_{\mathrm{tot}}$ are the lattice's total edge and face counts. Writing $b$ for the number of boundary edges, Euler's formula together with the disk's face structure gives the exact relations $E_{\mathrm{tot}}=3V-3-b$ and $F_{\mathrm{tot}}=2V-2-b$. Substituting into \eqref{eq:exact-identity} in expectation:
+\begin{equation}
+\mathbb{E}\left[\int_0^1\beta_1(p)\,dp\right] = \mathbb{E}[w_{\mathrm{MST}}] - \frac{b}{4}.
+\label{eq:reduced-identity}
+\end{equation}
+With $b/V\to1-1/\lambda(q)$ from \S\ref{sec:curvature-knob}, the boundary term contributes exactly $-\tfrac14+\tfrac{1}{4\lambda(q)}$ to $H_1$ persistence per vertex. Everything else is in the bulk term
+\[
+\mu(q) := \lim_{V\to\infty}\frac{\mathbb{E}[w_{\mathrm{MST}}]}{V},
+\]
+the expected weight of a minimum spanning tree per vertex under i.i.d.\ Uniform$[0,1]$ edge weights. Because the outermost ring is a fixed fraction of the disk, $\mu(q)$ is a property of the disk sequence, not of a translation-invariant bulk; that is what makes it derivable.
+
+\subsection{Deriving the bulk term}
+\label{sec:bulk}
+
+The identity $\int_0^1\beta_0(p)\,dp=1+w_{\mathrm{MST}}$ runs both ways, so $\mathbb{E}[w_{\mathrm{MST}}]=\int_0^1(\mathbb{E}[C(p)]-1)\,dp$ where $C(p)$ is the number of connected components at threshold $p$. This turns the spanning-tree weight into a percolation question: how many components, on average, at each $p$.
+
+\paragraph{One ring at a time.} Build the disk ring by ring and ask how many new components ring $n$ contributes at threshold $p$, given everything inside it. If the interior were a single connected component, then ring $n$'s contribution would be the number of maximal runs of consecutive ring-$n$ vertices, joined by present rim edges, that have no present spoke into the interior. Ring $n$ is a cycle of $rc[n]$ vertices; each vertex has one spoke inward if e-type and two if v-type; and rim edges, spokes, and vertex types are all independent of one another. With $\alpha=1/\lambda(q)$ the v-type fraction, the probability that a given vertex has no present inward spoke is $(1-p)(1-\alpha p)$, and the runs are a renewal process along the cycle with geometric lengths. Summing over runs gives, per vertex of the ring,
+\begin{equation}
+c(p;\alpha) = \frac{(1-p)^3\,(1-\alpha p)}{1-p(1-p)(1-\alpha p)},
+\qquad
+\mu_{\mathrm{wheel}}(\alpha) := \int_0^1 c(p;\alpha)\,dp.
+\label{eq:wheel}
+\end{equation}
+Since every ring contributes the same per-vertex amount, $\mu_{\mathrm{wheel}}(\alpha)$ is the bulk density under the single-connected-interior assumption. At $\alpha\to0$ the integral is elementary:
+\begin{equation}
+\mu_{\mathrm{wheel}}(0) = \frac32 - \frac{2\pi}{3\sqrt3} = 0.290800\ldots
+\label{eq:intercept}
+\end{equation}
+
+\paragraph{Where the assumption is exact, and where it is not.} The outermost ring has nothing outside it, so the only way one of its spoke-free runs can join anything is through the interior, and for it the assumption is exact. An inner ring is different: two of its spoke-free runs, separated by an absent rim edge between vertices $u$ and $u+1$, can be joined through the ring outside, because $u$ and $u+1$ have a common child $w$ there (the v-type vertex they share). If a run of present rim edges through $w$ carries a present spoke to $u$ on one side and to $u+1$ on the other, the two runs are one component, and the single-interior count is one too high. Averaging over the geometric length of the run through $w$ gives the probability that a given absent rim edge is bridged this way,
+\begin{equation}
+\beta(p) = \left(\frac{p}{1-p+p^2}\right)^2,
+\label{eq:beta}
+\end{equation}
+so that the effective probability two consecutive ring vertices are connected, directly or via the ring outside, is $p_{\mathrm{eff}}=p+(1-p)\beta(p)$. Recomputing the run count with $p_{\mathrm{eff}}$ for rim connectivity and $p$ for spoke presence,
+\[
+c_{\mathrm{eff}}(p) = \frac{(1-p_{\mathrm{eff}})^2(1-p)}{1-p_{\mathrm{eff}}(1-p)},
+\]
+and the overcount per inner-ring vertex, integrated over $p$, is
+\begin{equation}
+B_1 = \int_0^1\big[c(p;0)-c_{\mathrm{eff}}(p)\big]\,dp = 0.04713\ldots
+\label{eq:B1}
+\end{equation}
+The integrand is the rational function $p^2(1-p)^3(p^4-p^3+p^2-p+1)/[(p^2-p+1)^2(p^6-3p^5+5p^4-5p^3+5p^2-3p+1)]$; the sextic is palindromic and reduces to an irreducible cubic in $p+1/p$, so $B_1$ has a closed form, but not an illuminating one. Since the inner rings are a $1/\lambda$ fraction of the disk, and bridging through two or more rings is suppressed by further powers of $1/\lambda$,
+\begin{equation}
+\mu(q) = \mu_{\mathrm{wheel}}\!\left(\tfrac{1}{\lambda(q)}\right) - \frac{B_1}{\lambda(q)} + O\!\left(\lambda(q)^{-2}\right).
+\label{eq:mu-derived}
+\end{equation}
+
+\paragraph{Checks on the pieces.} Each ingredient was tested separately by simulation on the constructed graphs, not only the final sum. The v-type fraction is $1/\lambda(q)$ to four decimals. The outermost ring's run count matches $c(p;\alpha)$ to about $1\%$ at every $p$, and its overcount is exactly zero at every $p$. The bridging probability $\beta(p)$, measured directly at absent rim edges, matches \eqref{eq:beta} to within $2\%$ across $p$. The per-vertex overcount of an inner ring, measured at $q=20$ and $q=12$ where the ring outside is long enough for the local picture to apply, integrates to $0.047$ and $0.045$ against $B_1=0.0471$. And the abstract run-counting model reproduces $c-c_{\mathrm{eff}}$ to four digits in its own Monte Carlo. The remaining difference between \eqref{eq:mu-derived} and measurement scales as $\lambda^{-2}$ with a coefficient near $-0.01$, as a first-order expansion should leave.
+
+\subsection{The predicted law and the measurements}
+\label{sec:measurements}
+
+Combining \eqref{eq:reduced-identity} and \eqref{eq:mu-derived}, total persistent $H_1$ per vertex is
+\begin{equation}
+\frac{H_1}{V} = \mu_{\mathrm{wheel}}\!\left(\tfrac1\lambda\right) - \frac{B_1}{\lambda} - \frac14 + \frac{1}{4\lambda} + O(\lambda^{-2}),
+\qquad
+\lim_{\lambda\to\infty}\frac{H_1}{V} = \frac54 - \frac{2\pi}{3\sqrt3} = 0.04080\ldots
+\label{eq:h1-derived}
+\end{equation}
+There are no fitted parameters in \eqref{eq:h1-derived}. The large-curvature intercept is a closed form. The dependence on $q$ enters only through $\lambda(q)$, and the leading behavior is linear in $1/\lambda$ because that is the expansion parameter; $\mu_{\mathrm{wheel}}$ is not exactly linear in $\alpha$, which is why a straight line is a good but not perfect description.
+
+\paragraph{Measurements.} Total persistent $H_1$ was measured for $q=7,8,9,10,11,12,13,14,16,18,20$, at each $q$'s largest tested system size ($V$ between $3{,}781$ and $31{,}809$), averaging 12 percolation draws. The bulk density $\mu(q)$ needs only Kruskal's algorithm, so it was measured separately at much larger sizes, up to $V\approx2\times10^6$. Tables~\ref{tab:mu} and~\ref{tab:h1} compare both to the derived values, and Figure~\ref{fig:derived} plots them against $1/\lambda(q)$.
 
 \begin{table}[htbp]
 \centering
-\begin{tabular}{rrr}
+\begin{tabular}{rrrrr}
 \toprule
-$q$ & largest $N$ tested & $\mu(q)=\mathbb{E}[w_{\mathrm{MST}}]/V$ \\
+$q$ & $\lambda(q)$ & measured $\mu(q)$ & derived, eq.~\eqref{eq:mu-derived} & difference \\
 \midrule
-6  & 1{,}995{,}121 & 0.18739 \\
-7  & 1{,}374{,}920 & 0.24557 \\
-8  & 1{,}653{,}609 & 0.25852 \\
-9  &   689{,}311   & 0.26548 \\
-10 &   487{,}561   & 0.26990 \\
-11 & 1{,}364{,}364 & 0.27297 \\
-12 &   422{,}605   & 0.27532 \\
-13 &   822{,}641   & 0.27700 \\
-14 & 1{,}495{,}495 & 0.27837 \\
-16 &   354{,}641   & 0.28055 \\
-18 &   733{,}591   & 0.28198 \\
-20 & 1{,}382{,}101 & 0.28310 \\
+7 & 2.618 & 0.24557 & 0.24430 & $-0.00127$ \\
+8 & 3.732 & 0.25852 & 0.25796 & $-0.00056$ \\
+9 & 4.791 & 0.26548 & 0.26514 & $-0.00034$ \\
+10 & 5.828 & 0.26990 & 0.26966 & $-0.00024$ \\
+11 & 6.854 & 0.27297 & 0.27279 & $-0.00018$ \\
+12 & 7.873 & 0.27532 & 0.27511 & $-0.00021$ \\
+13 & 8.887 & 0.27700 & 0.27688 & $-0.00012$ \\
+14 & 9.899 & 0.27837 & 0.27830 & $-0.00007$ \\
+16 & 11.916 & 0.28055 & 0.28040 & $-0.00015$ \\
+18 & 13.928 & 0.28198 & 0.28190 & $-0.00008$ \\
+20 & 15.937 & 0.28310 & 0.28302 & $-0.00008$ \\
 \bottomrule
 \end{tabular}
-\caption{Bulk minimum-spanning-tree weight density, by $q$, at converged system sizes.}
+\caption{Bulk minimum-spanning-tree weight per vertex, measured at $V$ up to $2\times10^6$, against the derived value. Root-mean-square difference $0.00045$.}
 \label{tab:mu}
 \end{table}
 
-$\mu(q)$ rises monotonically from $\approx0.187$ at $q=6$ toward a plateau near $0.283$ at $q=20$, carrying its own $\lambda$-dependent correction that runs in the \emph{opposite} direction from the boundary term and partially cancels it. Fitting $\mu(q)$ to the same functional form as \S\ref{sec:scaling-law} gives
-\[
-\mu(q) = 0.28801 - \frac{0.10234}{\lambda(q)}, \qquad R^2=0.9966,
-\]
-and $1/\lambda(q)$ is again the clearly preferred variable, by the same alternative-form comparison used in \S\ref{sec:results-check} ($R^2=0.940$ for $1/(q-4)$, $0.881$ for $1/q^2$, $0.780$ for $1/q$, against $\mu(q)$'s own $R^2=0.9966$).
-
-Substituting this into \eqref{eq:reduced-identity} together with the boundary term's exact $-\tfrac14+\tfrac{1}{4\lambda(q)}$ gives a \emph{predicted} scaling law, built from two independently measured mechanisms with no reference to \S\ref{sec:scaling-law}'s directly-fitted law at all:
-\[
-H_1/\text{vertex} \approx \big(0.28801-0.25\big) + \frac{-0.10234+0.25}{\lambda(q)} = 0.03801 + \frac{0.14766}{\lambda(q)}.
-\]
-Compare this to \S\ref{sec:scaling-law}'s directly-fitted law, $0.03806+0.1477/\lambda(q)$: the two agree to four significant figures on both coefficients (Figure~\ref{fig:mu}, right panel), a strong, independent check that identity \eqref{eq:reduced-identity} and the decomposition built on it are correct: not just algebraically valid, but empirically load-bearing.
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrr}
+\toprule
+$q$ & measured $H_1/V$ & derived, eq.~\eqref{eq:h1-derived} & difference \\
+\midrule
+7 & $0.0910\pm0.0009$ & 0.0898 & $-0.0012$ \\
+8 & $0.0755\pm0.0005$ & 0.0750 & $-0.0005$ \\
+9 & $0.0676\pm0.0007$ & 0.0673 & $-0.0003$ \\
+10 & $0.0630\pm0.0010$ & 0.0625 & $-0.0005$ \\
+11 & $0.0594\pm0.0004$ & 0.0593 & $-0.0001$ \\
+12 & $0.0578\pm0.0013$ & 0.0569 & $-0.0009$ \\
+13 & $0.0552\pm0.0004$ & 0.0550 & $-0.0002$ \\
+14 & $0.0535\pm0.0008$ & 0.0536 & $+0.0001$ \\
+16 & $0.0516\pm0.0006$ & 0.0514 & $-0.0002$ \\
+18 & $0.0500\pm0.0015$ & 0.0498 & $-0.0002$ \\
+20 & $0.0488\pm0.0016$ & 0.0487 & $-0.0001$ \\
+\bottomrule
+\end{tabular}
+\caption{Total persistent $H_1$ per vertex, measured (mean and realization-to-realization spread over 12 draws) against the derived value. Root-mean-square difference $0.0005$; every point is within its own spread.}
+\label{tab:h1}
+\end{table}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figure_mu_decomposition.png}
-\caption{Left: $\mu(q)$ versus $1/\lambda(q)$, all-twelve fit (dotted) versus hyperbolic-only fit (dashed); $q=6$ shows the same leverage pattern found for $H_1$/vertex directly (\S\ref{sec:q6-outlier}). Right: the directly-fitted \S\ref{sec:scaling-law} law (grey) versus the sum of the two independently-derived mechanisms (dashed blue), indistinguishable at this scale.}
-\label{fig:mu}
+\includegraphics[width=\textwidth]{figure_derived_law.png}
+\caption{Left: measured $\mu(q)$ against $1/\lambda(q)$, with the derived curve \eqref{eq:mu-derived} (solid) and the one-ring term $\mu_{\mathrm{wheel}}$ alone (dashed). Right: measured total $H_1$ per vertex with the derived curve \eqref{eq:h1-derived}. Neither curve has a fitted parameter.}
+\label{fig:derived}
 \end{figure}
 
-\paragraph{$q=6$'s leverage, resolved exactly.} $\mu(q)$ shows precisely the same pattern flagged in \S\ref{sec:q6-outlier} for $H_1$/vertex directly. Fitting only the eleven hyperbolic points gives an even tighter law, $\mu(q)=0.29031-0.11795/\lambda(q)$, $R^2=0.99977$ (versus $0.9966$ for all twelve), and extrapolating it to $\lambda=1$ predicts $\mu(6)=0.17236$, a gap of $-0.01503$ from the measured value. This is the same anomaly flagged in \S\ref{sec:q6-outlier}, not a second, independent one: since the boundary term vanishes at $q=6$, this gap and $H_1$/vertex's own gap ($-0.01551$) should be identical in the $N\to\infty$ limit, and they agree to within $0.0005$, an independent confirmation that identity \eqref{eq:reduced-identity} correctly locates $q=6$'s entire deviation from the hyperbolic trend in the bulk term, as the vanishing boundary term requires. A further cross-check comes from a completely different computational route (Kruskal MST density here, versus full persistent homology in \S\ref{sec:convergence}): the two independently measured $q=6$ asymptotes, $\mu(6)=0.18739$ and $H_1/\text{vertex}(6)=0.18757\pm0.00034$, agree to within $0.1\%$, exactly the equality this decomposition predicts.
+\paragraph{On fitting.} Before the derivation existed, the natural summary of Table~\ref{tab:h1} was a two-parameter fit, $H_1/V\approx0.0404+0.1316/\lambda(q)$ with $R^2=0.9995$. A fit that good over eleven points of a smooth monotone function is weaker evidence than it feels: many decreasing functions of $q$ would fit comparably, and $1/\lambda(q)$ could have been an artifact of the range. The derivation removes that concern by producing the functional form rather than assuming it. A straight line fitted to the derived curve \eqref{eq:h1-derived} over the same $q$ is $0.0406+0.1286/\lambda(q)$, which is the empirical fit to within its own uncertainty. The fit is now a check on the derivation, not the result.
 
-So the scaling law of \S\ref{sec:scaling-law} is now fully accounted for, though not yet fully \emph{proven}. The boundary term is a derived consequence of the ring recursion that defines $\lambda(q)$, and the bulk term, while not yet derived from first principles, is shown to obey a comparably clean $1/\lambda(q)$ law in its own right, independently measured and sufficient to reconstruct the whole law to four significant figures. What remains open is narrower than before: the question is no longer why $H_1$ persistence scales this way, but specifically why the expected minimum-spanning-tree weight per vertex on a $\{3,q\}$ disk is itself linear in $1/\lambda(q)$. One natural route is the same recursive self-similarity that produces $\lambda(q)$: a transfer-matrix computation of $\mathbb{E}[\beta_0(p)]$ ring by ring, in the spirit of the exact solutions already available on the Bethe lattice itself. A second, more specific route: $\mathbb{E}[w_{\mathrm{MST}}]$ on the complete graph with i.i.d.\ Uniform$[0,1]$ weights is famously solvable in closed form, converging to $\zeta(3)$ \citep{frieze1985}, via an argument that replaces the finite graph with its local weak limit, the Poisson-Weighted Infinite Tree, on which the minimum spanning forest is computable recursively because the limit is a tree \citep{aldous2004}. Whether the $\{3,q\}$ percolation complex has an analogous tractable local limit as $q\to\infty$, built from triangles rather than edges, is an open question, and probably the most promising next step toward closing this gap.
+\subsection{Remarks}
+\label{sec:remarks}
 
-$\mu(\infty)=0.28801$ should not be read as the Bethe-lattice value in the usual sense, though: even as $q\to\infty$, the $\{3,q\}$ tiling keeps being built from filled triangles, so its large-curvature limit stays a triangulated object rather than becoming the triangle-free regular tree that ``Bethe lattice'' ordinarily denotes. It is only asymptotically tree-like at long range, consistent with, and perhaps the reason for, an intercept that is small but nonzero rather than zero.
+The large-curvature limit of the bulk term, $\mu_{\mathrm{wheel}}(0)=3/2-2\pi/(3\sqrt3)$, should not be read as a Bethe-lattice value. As $q\to\infty$ the v-type fraction $1/\lambda$ goes to zero, so each ring attaches to the interior through single spokes, but the ring is still a cycle of filled triangles, and the cycle is what the calculation in \S\ref{sec:bulk} is about. The tiling never becomes the triangle-free regular tree that ``Bethe lattice'' ordinarily denotes; it is tree-like at long range only, and the nonzero intercept $5/4-2\pi/(3\sqrt3)$ in \eqref{eq:h1-derived} is the loop content that survives on the rim.
+
+What remains open is the $O(\lambda^{-2})$ term in \eqref{eq:mu-derived}. Numerically it is about $-0.01/\lambda^2$. It collects bridging through two rings and the correlation between bridges at neighboring rim breaks, both of which are local computations of the same kind as \eqref{eq:beta}, and there is no obstacle in principle to carrying the expansion one order further. Whether the full series resums to something closed is a separate question. The same method applies to any $\{p,q\}$ family built by ring growth, with $\lambda$, the v-type fraction, and the seam structure replaced by their analogues.
 
 \section{Application: percolation-based data models for interpretability research}
 \label{sec:brill}
 
 Percolation-based synthetic data models for mechanistic interpretability research are one concrete setting where the tree-likeness question measured above already matters in practice. Principles of Intelligence's published data model treats a data distribution as a critical percolation cluster process on a high-dimensional lattice, generated by an explicit hierarchical fine-graining algorithm and embedded into a vector space via a branching random walk, the same embedding construction sketched as future work in \S\ref{sec:partB} \citep{brill2024,brill2025lattice}. The high-dimensional case is analytically tractable because, in high dimensions, a random path essentially never self-intersects, so percolation clusters are vanishingly unlikely to contain loops; the lattice can then be replaced by a Bethe lattice, an infinite tree of fixed degree, for which the percolation threshold and critical exponents are solvable exactly \citep{brill2025lattice,stauffer1994}.
 
-This is a homological claim dressed in probabilistic language: it says $H_1$ of the percolation cluster vanishes in the relevant limit, leaving only $H_0$ (connectivity), which is all the tree picture needs. \S\ref{sec:partA} turns ``is the treelike approximation good enough'' from a qualitative appeal to dimension into a number: total $H_1$ persistence per vertex is $0.0381+0.1477/\lambda(q)$, a finite, invertible law rather than an asymptotic statement about $d\to\infty$. Given a target loop-persistence value, the fitted law inverts directly, picking off the curvature (or, between integer $q$, an interpolated tiling family) that hits any specified distance from the treelike limit. The high-dimension argument alone cannot offer that: it only ever says the approximation gets better, not by how much at any particular finite $d$.
+This is a homological claim dressed in probabilistic language: it says $H_1$ of the percolation cluster vanishes in the relevant limit, leaving only $H_0$ (connectivity), which is all the tree picture needs. \S\ref{sec:partA} turns ``is the treelike approximation good enough'' from a qualitative appeal to dimension into a number: total $H_1$ persistence per vertex is given by \eqref{eq:h1-derived}, a finite, invertible expression rather than an asymptotic statement about $d\to\infty$. Given a target loop-persistence value, the law inverts, picking off the curvature (or, between integer $q$, an interpolated tiling family) that hits any specified distance from the treelike limit. The high-dimension argument alone cannot offer that: it only ever says the approximation gets better, not by how much at any particular finite $d$.
 
-A further check the original data-model literature does not attempt, sketched but not resolved in \S\ref{sec:partB}, is whether the same suppression, measured here on the abstract complex, actually reaches a trained model's learned features once the data is embedded and used for training, rather than remaining a fact about the input distribution's own combinatorics that a downstream model might or might not pick up on. If it holds, that would be evidence that a data model's tree-likeness at the input level is something a trained model's own representations can inherit, not just a modeling convenience -- but that check is left to future work here, not claimed as a result.
+A further check the original data-model literature does not attempt, sketched but not resolved in \S\ref{sec:partB}, is whether the same suppression, measured here on the abstract complex, actually reaches a trained model's learned features once the data is embedded and used for training, rather than remaining a fact about the input distribution's own combinatorics that a downstream model might or might not pick up on. If it holds, that would be evidence that a data model's tree-likeness at the input level is something a trained model's own representations can inherit, not just a modeling convenience. That check is left to future work here, not claimed as a result.
 
-Two things this paper does not claim. First, it is not a demonstration that Brill's model is right or wrong in the high-dimensional regime it is actually intended for: for $d\gtrsim6$, percolation clusters have fractal dimension $4<d$, and the model's own asymptotic argument already applies on its own terms, without needing curvature as a substitute. Second, curvature and dimension are not interchangeable in general. What is shown here is that they produce the same qualitative mechanism (tree-likeness driven by an isoperimetric, non-amenability property, rather than by literal high-dimensional sparsity), not that they are numerically equivalent knobs. Curvature's real advantage is that it is a controllable, finite-size, quantifiable stand-in for a question that is otherwise only answerable in an asymptotic limit: it can be measured and dialed on graphs small enough to simulate directly, which the high-dimensional case is not.
+Two things this paper does not claim. First, it is not a demonstration that Brill's model is right or wrong in the high-dimensional regime it is actually intended for: for $d\gtrsim6$, percolation clusters have fractal dimension $4<d$, and the model's own asymptotic argument already applies on its own terms, without needing curvature as a substitute. Second, curvature and dimension are not interchangeable in general. What is shown here is that they produce the same qualitative mechanism (tree-likeness driven by an isoperimetric, non-amenability property, rather than by literal high-dimensional sparsity), not that they are numerically equivalent knobs. Curvature's real advantage is that it is a controllable, finite-size, quantifiable stand-in for a question that is otherwise only answerable in an asymptotic limit: it can be measured, dialed, and now computed on graphs small enough to simulate directly, which the high-dimensional case is not.
 
 \section{Further work: embedding percolated subsets into vector space}
 \label{sec:partB}
 
 Section~\ref{sec:partA} measures $H_1$ on the abstract percolation complex, a quantity defined without reference to any embedding at all. A natural next question is what happens once a cluster is no longer just an abstract complex but an actual point cloud: does curvature's suppression of loop content survive being embedded into a vector space and fed to a trained model, the object a downstream model such as a sparse autoencoder (SAE) would actually receive as input?
 
-The natural embedding to try first is a \textbf{branching random walk (BRW)}: a breadth-first-search spanning tree of each cluster is chosen, each tree edge is assigned an i.i.d.\ Gaussian step, and each node's coordinate is the cumulative sum of steps along its unique path from the cluster's root. This reproduces the tree's own path metric exactly, so any embedding-space distortion at non-tree (cycle-closing) edges is directly attributable to the cluster's own loop content rather than to an artifact of the embedding scheme: a \textbf{cycle inconsistency} score, measurable with no homology computation at all. Training a sparse autoencoder on the pooled embeddings and measuring \textbf{feature-splitting} -- a single underlying concept (here, membership in one percolation cluster) getting represented by several dictionary atoms instead of one \citep{bricken2023,cunningham2023} -- would then test whether that same loop content propagates three steps downstream, into a trained model's own learned features.
+The natural embedding to try first is a \textbf{branching random walk (BRW)}: a breadth-first-search spanning tree of each cluster is chosen, each tree edge is assigned an i.i.d.\ Gaussian step, and each node's coordinate is the cumulative sum of steps along its unique path from the cluster's root. This reproduces the tree's own path metric exactly, so any embedding-space distortion at non-tree (cycle-closing) edges is directly attributable to the cluster's own loop content rather than to an artifact of the embedding scheme: a \textbf{cycle inconsistency} score, measurable with no homology computation at all. Training a sparse autoencoder on the pooled embeddings and measuring \textbf{feature-splitting}, a single underlying concept (here, membership in one percolation cluster) getting represented by several dictionary atoms instead of one \citep{bricken2023,cunningham2023}, would then test whether that same loop content propagates three steps downstream, into a trained model's own learned features.
 
 A preliminary campaign along these lines has been run but is not reported here in detail. Two independent passes at different scales agreed on the qualitative direction of the effect (both cycle inconsistency and feature-splitting score fell monotonically with $q$) but disagreed on absolute magnitude by more than sampling noise should allow, most plausibly because cluster sampling, embedding dimension, and training configuration were not held fixed between the two passes. Reconciling this under one fixed, controlled configuration, rather than reporting whichever numbers a particular run happened to produce, is necessary before this pipeline's output should be treated as a result rather than a promising direction, and is left to future work.
-
-% Sections 8 (Discussion and open questions) and 9 (pipeline/code appendix) per
-% PAPER_OUTLINE.md are not yet drafted.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
