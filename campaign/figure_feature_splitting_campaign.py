@@ -17,6 +17,8 @@ This figure separates the two explicitly:
 Usage:
     python campaign/figure_feature_splitting_campaign.py
 """
+import os
+from _paths import HERE, RESULTS, FIGURES
 import json
 import numpy as np
 from scipy import stats
@@ -42,8 +44,8 @@ plt.rcParams.update({
 })
 
 
-def main(summary_path='campaign/results/summary.json',
-         out_path='campaign/results/sae_feature_splitting_campaign.png'):
+def main(summary_path=os.path.join(HERE, 'results', 'summary.json'),
+         out_path=os.path.join(HERE, 'results', 'sae_feature_splitting_campaign.png')):
     with open(summary_path) as f:
         d = json.load(f)
     qs = sorted(d, key=int)

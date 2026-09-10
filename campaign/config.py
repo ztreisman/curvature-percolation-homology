@@ -4,12 +4,13 @@ Campaign configuration for lambda01 (GPU machine).
 Larger lattices, more trials, larger SAE, GPU training.
 Uses the same pipeline as sae_experiment.py (local test) but at scale.
 
-Run from the project root:
+Run with:
     python campaign/run_campaign.py
 
 Results are checkpointed to campaign/results/ after each q value so the
 run can be interrupted and resumed.
 """
+import os
 
 # Lattice sizes: much larger rings than local test.
 # q=7  rings=8  -> N  ≈ 26,796 vertices
@@ -38,4 +39,4 @@ COVERAGE   = 0.90   # feature-splitting threshold
 
 SEED       = 42
 
-RESULTS_DIR = 'campaign/results'
+RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results')

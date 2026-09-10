@@ -9,6 +9,8 @@ Run from project root:
 
 Expects GPU (CUDA) available; falls back to CPU with a warning.
 """
+import os
+from _paths import HERE, RESULTS, FIGURES
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -33,7 +35,7 @@ def checkpoint_path(q):
     return RESULTS_DIR / f'q{q:02d}.json'
 
 
-def load_h1_reference(path='sweep_results.json'):
+def load_h1_reference(path=os.path.join(RESULTS, 'sweep_results.json')):
     try:
         with open(path) as f:
             sweep = json.load(f)
