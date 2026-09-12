@@ -42,9 +42,12 @@ The derivation has three parts, each checked separately by simulation:
    count, and b/V -> 1 - 1/lambda from the ring recursion.
 2. **The one-ring term.** Attaching ring n to a contracted interior turns
    E[w_MST]/V into a percolation calculation on a cycle with spokes. Each ring
-   vertex has one spoke inward (e-type) or two (v-type); the v-type fraction
-   is exactly 1/lambda(q), and the pattern around a ring is a Sturmian word of
-   that slope. A renewal sum gives mu_wheel.
+   vertex has one spoke inward (e-type) or two (v-type). The v-type count is
+   exactly v_n = rc[n-1] (ring n-1 is a cycle; each adjacent pair shares one
+   child), so the fraction is rc[n-1]/rc[n] -> 1/lambda(q). The arrangement
+   around a ring is periodic with period rc[n]/q, the fundamental domain of
+   the q-fold rotational symmetry, and balanced within a period. A renewal sum
+   gives mu_wheel.
 3. **The bridging correction.** The outermost ring (a 1 - 1/lambda fraction of
    the disk) attaches exactly. In an inner ring, two spoke-free runs on either
    side of an absent rim edge can be joined through the ring outside, via the
@@ -109,8 +112,9 @@ The derived law against measurement, no fitted curves:
                            pc_window_check.py      share of H1 persistence near p_c
                            pc_ring_scan.py         beta_1(p_c) vs ring depth
                            xstar_check.py          v-type fraction = 1/lambda, verified
+                           vtype_pattern.py        ring pattern: period rc[n]/q, balanced
                            mu_derivation_check.py  one-ring term vs measurement
-                           mu_derivation_sturmian.py  Sturmian vs i.i.d. pattern (negligible)
+                           mu_derivation_sturmian.py  balanced vs i.i.d. pattern (negligible)
                            mu_residual_structure.py   inner-ring overcount by simulation
                            bridging_diagnose.py    beta(p) and the accounting, separately
                            mu_full_derivation.py   the complete formula vs all q

@@ -34,7 +34,7 @@ This cost is intuitive but rarely turned into a measurable quantity for a specif
 
 Section~\ref{sec:partA} treats the topology of the percolated complex. Bond percolation defines a filtered simplicial complex, and its total persistent $H_1$ (summed bar length across the whole percolation process, per vertex) is measured across eleven values of $q$. The main result is a derivation of that quantity. An exact identity reduces total $H_1$ persistence to the weight of the lattice's minimum spanning tree minus a boundary correction. The boundary correction is a consequence of the ring recursion that defines $\lambda(q)$. The spanning-tree weight is derived by attaching rings one at a time to a contracted interior, which reduces it to a percolation calculation on a cycle with spokes, plus a first-order correction for the rare but systematic loops that close through the ring outside. The formula that results has no adjustable parameters and matches the measurements at every $q$ to within their uncertainties. In particular it explains why the measured values are so close to linear in $1/\lambda(q)$: the expansion parameter of the derivation is $1/\lambda(q)$ itself.
 
-Section~\ref{sec:diagnostic} sets up persistent homology as the diagnostic used throughout. Section~\ref{sec:curvature-knob} defines the family, its growth rate $\lambda(q)$, and the two combinatorial facts about ring structure the derivation depends on. Section~\ref{sec:partA} contains the derivation and the measurements. Section~\ref{sec:brill} discusses one concrete application: percolation-based synthetic data models for mechanistic interpretability research, which rely on the same tree-likeness assumption measured here. Section~\ref{sec:partB} sketches a natural extension: embedding percolated clusters into vector space and testing whether the same suppression reaches a trained model's own features.
+Section~\ref{sec:diagnostic} sets up persistent homology as the diagnostic used throughout. Section~\ref{sec:curvature-knob} defines the family, its growth rate $\lambda(q)$, and the two combinatorial facts about ring structure the derivation depends on. Section~\ref{sec:partA} contains the derivation and the measurements. Section~\ref{sec:brill} discusses one concrete application: percolation-based synthetic data models for mechanistic interpretability research, which rely on the same tree-likeness assumption measured here. Section~\ref{sec:partB} sketches a natural extension: embedding percolated clusters into a vector space and testing whether the dependence of loop content on curvature survives the embedding and shows up in the features a trained model learns from it.
 
 \section{Persistent homology as the diagnostic}
 \label{sec:diagnostic}
@@ -60,15 +60,15 @@ One subtlety matters again in \S\ref{sec:identity}. A single triangular face's o
 \section{The $\{3,q\}$ tilings and their ring structure}
 \label{sec:curvature-knob}
 
-The family of regular triangulations $\{3,q\}$ ($q$ equilateral triangles meeting at every vertex) is built by the standard ring-growth construction: starting from a single vertex, each successive ring is attached according to the fixed combinatorial rule that $q$ triangles meet at every vertex. Ring sizes satisfy the linear recursion
+The family of regular triangulations $\{3,q\}$ ($q$ equilateral triangles meeting at every vertex) is built by a ring-growth construction: starting from a single vertex, each successive ring is attached according to the fixed combinatorial rule that $q$ triangles meet at every vertex. Ring sizes satisfy the linear recursion
 \[
 rc[n] = (q-4)\cdot rc[n-1] - rc[n-2], \qquad rc[0]=1,\ rc[1]=q,
 \]
-whose dominant root
+which has characteristic equation  $\lambda^2=(q-4)\lambda-1$ with dominant root
 \[
-\lambda(q) = \frac{(q-4) + \sqrt{(q-4)^2-4}}{2}
+\lambda(q) = \frac{(q-4) + \sqrt{(q-4)^2-4}}{2}.
 \]
-is the tiling's asymptotic per-ring growth rate, $rc[n]/rc[n-1]\to\lambda(q)$ as $n\to\infty$. For $q\ge7$ the discriminant is positive and $\lambda>1$, giving exponential growth. Table~\ref{tab:ladder} gives illustrative values. Everything below uses the identity $\lambda^2=(q-4)\lambda-1$, which is just the characteristic equation of the recursion.
+This is the tiling's asymptotic per-ring growth rate, $rc[n]/rc[n-1]\to\lambda(q)$ as $n\to\infty$. For $q\ge7$ the discriminant is positive and $\lambda>1$, giving exponential growth. Table~\ref{tab:ladder} gives illustrative values.
 
 \begin{table}[htbp]
 \centering
@@ -108,11 +108,18 @@ $q$ & $V$ & $b/V$ & $1-1/\lambda(q)$ \\
 \label{tab:boundary}
 \end{table}
 
-\paragraph{Each ring has two kinds of vertex.} A vertex in ring $n$ is adjacent either to one vertex of ring $n-1$ (call it e-type) or to two (v-type). The v-type vertices are the children shared between adjacent parents: every consecutive pair of vertices in ring $n-1$ has exactly one common child in ring $n$. Counting child slots, an e-type parent has $q-3$ children and a v-type parent $q-4$, and each v-type child absorbs two slots; this gives a recursion for the number $v_n$ of v-type vertices whose fixed point, using $\lambda^2=(q-4)\lambda-1$, is
-\[
-\frac{v_n}{rc[n]} \;\to\; \frac{1}{\lambda(q)}.
-\]
-This was checked directly on the constructed graphs and holds to four decimal places at every $q$ tested. The pattern of e- and v-type vertices around a ring is not random: it is a Sturmian word of slope $1/\lambda(q)$ (the number of distinct length-$L$ subwords is exactly $L+1$), which is what one expects from a construction that is recursive and symmetric about the center. The derivation below treats the pattern as if it were independent per vertex; the error this introduces was computed using the Sturmian structure and is below $10^{-3}$ at $q=7$ and negligible beyond, so the simpler treatment is used.
+\paragraph{Each ring has two kinds of vertex.} A vertex in ring $n$ is adjacent either to one vertex of ring $n-1$ (call it e-type) or to two (v-type). The v-type vertices are the children shared between adjacent parents, and counting them is immediate: ring $n-1$ is a cycle, so it has $rc[n-1]$ adjacent pairs, each pair has exactly one common child in ring $n$, and distinct pairs have distinct common children. Hence
+\begin{equation}
+v_n = rc[n-1],
+\qquad\text{so}\qquad
+\frac{v_n}{rc[n]} = \frac{rc[n-1]}{rc[n]} \;\longrightarrow\; \frac{1}{\lambda(q)} .
+\label{eq:vtype}
+\end{equation}
+The v-type count is exact at every ring; only the fraction is asymptotic, and it converges at the same rate as the ring ratio itself.
+
+The arrangement of the two types around a ring is rigid rather than random, as the recursive, $q$-fold symmetric construction requires. The sequence is periodic with period $rc[n]/q$, the fundamental domain of the rotational symmetry, and within a period it is balanced: every window of $L$ consecutive vertices contains either $\lfloor L\alpha_n\rfloor$ or $\lceil L\alpha_n\rceil$ v-types, where $\alpha_n=rc[n-1]/rc[n]$. (A balanced periodic word of rational slope is a Christoffel word; as $n$ grows, $\alpha_n\to1/\lambda(q)$, which is irrational, and these words converge to the Sturmian word of that slope.) Both properties were checked directly on the constructed graphs for every $q$ and ring depth used here.
+
+The derivation in \S\ref{sec:bulk} treats the type of each vertex as if it were independent with probability $\alpha_n$, which the balance property says it is not: consecutive v-types never occur, and the gaps between them take only two lengths. Redoing the renewal sum with the balanced counting statistic in place of the binomial one changes the result by less than $10^{-3}$ at $q=7$ and by less at larger $q$, well inside the other approximations, so the independent treatment is kept.
 
 \paragraph{Why $q=6$ is excluded.} At $q=6$ the recursion has a repeated root $\lambda=1$: ring sizes grow linearly, the boundary fraction $b/V$ tends to zero rather than to a positive constant, and there is no small parameter. Every result in \S\ref{sec:partA} is an expansion in $1/\lambda(q)$, and at $\lambda=1$ that expansion has nothing to expand in. The flat case also behaves differently in a purely practical sense: its per-vertex loop content converges to its large-$N$ limit only as a power law in $N$ (roughly $N^{-0.45}$, needing on the order of $10^6$ vertices for three-figure accuracy), whereas every hyperbolic $q$ is converged to within 1 to 2\% by $10^4$ vertices, consistent with the outermost ring being a fixed fraction of the whole so that adding a ring adds the same per-vertex contribution. The flat lattice is the amenable member of the family and is genuinely a different object; it is not part of this paper.
 
