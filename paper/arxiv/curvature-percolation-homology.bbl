@@ -1,0 +1,82 @@
+\begin{thebibliography}{11}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aldous and Steele(2004)]{aldous2004}
+David Aldous and J.~Michael Steele.
+\newblock The objective method: probabilistic combinatorial optimization and
+  local weak convergence.
+\newblock In \emph{Probability on Discrete Structures}, pages 1-72. Springer,
+  2004.
+
+\bibitem[Bobrowski and Skraba(2020)]{bobrowski2020}
+Omer Bobrowski and Primoz Skraba.
+\newblock Homological percolation and the {E}uler characteristic.
+\newblock \emph{Physical Review E}, 101\penalty0 (3):\penalty0 032304, 2020.
+\newblock arXiv:1910.10146.
+
+\bibitem[Bricken et~al.(2023)]{bricken2023}
+Trenton Bricken et~al.
+\newblock Towards monosemanticity: decomposing language models with dictionary
+  learning.
+\newblock Transformer Circuits Thread, 2023.
+\newblock \url{https://transformer-circuits.pub/2023/monosemantic-features}.
+
+\bibitem[Cunningham et~al.(2023)Cunningham, Ewart, Riggs, Huben, and
+  Sharkey]{cunningham2023}
+Hoagy Cunningham, Aidan Ewart, Logan Riggs, Robert Huben, and Lee Sharkey.
+\newblock Sparse autoencoders find highly interpretable features in language
+  models, 2023.
+\newblock arXiv:2309.08600.
+
+\bibitem[Frieze(1985)]{frieze1985}
+Alan~M. Frieze.
+\newblock On the value of a random minimum spanning tree problem.
+\newblock \emph{Discrete Applied Mathematics}, 10\penalty0 (1):\penalty0 47-56,
+  1985.
+
+\bibitem[Hiraoka and Shirai(2017)]{hiraoka2017}
+Yasuaki Hiraoka and Tomoyuki Shirai.
+\newblock Minimum spanning acycle and lifetime of persistent homology in the
+  {L}inial-{M}eshulam process.
+\newblock \emph{Random Structures \& Algorithms}, 51\penalty0 (2):\penalty0
+  315-340, 2017.
+\newblock arXiv:1503.05669.
+
+\bibitem[Hutchcroft(2019)]{hutchcroft2019}
+Tom Hutchcroft.
+\newblock Percolation on hyperbolic graphs.
+\newblock \emph{Geometric and Functional Analysis}, 29:\penalty0 766-810, 2019.
+\newblock arXiv:1804.10191.
+
+\bibitem[Lyons et~al.(2006)Lyons, Peres, and Schramm]{lyons2006}
+Russell Lyons, Yuval Peres, and Oded Schramm.
+\newblock Minimal spanning forests.
+\newblock \emph{Annals of Probability}, 34\penalty0 (5):\penalty0 1665-1692,
+  2006.
+\newblock arXiv:math/0412263.
+
+\bibitem[Mertens and Moore(2017)]{mertens2017}
+Stephan Mertens and Cristopher Moore.
+\newblock Percolation thresholds in hyperbolic lattices.
+\newblock \emph{Physical Review E}, 96:\penalty0 042116, 2017.
+\newblock arXiv:1708.05876.
+
+\bibitem[Nickel and Kiela(2017)]{nickel2017}
+Maximilian Nickel and Douwe Kiela.
+\newblock Poincar\'{e} embeddings for learning hierarchical representations.
+\newblock In \emph{Advances in Neural Information Processing Systems 30}, 2017.
+\newblock arXiv:1705.08039.
+
+\bibitem[Skraba et~al.(2020)Skraba, Thoppe, and Yogeshwaran]{skraba2020}
+Primoz Skraba, Gugan Thoppe, and D.~Yogeshwaran.
+\newblock Randomly weighted $d$-complexes: minimal spanning acycles and
+  persistence diagrams.
+\newblock \emph{Electronic Journal of Combinatorics}, 27\penalty0 (2):\penalty0
+  P2.11, 2020.
+\newblock arXiv:1701.00239.
+
+\end{thebibliography}

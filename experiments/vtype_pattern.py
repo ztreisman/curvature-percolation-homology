@@ -2,6 +2,8 @@
 Structure of the e-type / v-type sequence around a ring.
 
 Claims tested:
+  (0) ring n is sigma(ring n-1) up to rotation, where sigma is the
+      substitution e -> V e^(q-5), V -> V e^(q-6); so ring n = sigma^(n-1)(e^q)
   (1) v_n = rc[n-1] exactly (each adjacent pair in ring n-1 shares one child)
   (2) the type sequence around ring n is periodic with period rc[n]/q,
       the fundamental domain of the tiling's q-fold rotational symmetry
@@ -54,6 +56,24 @@ def is_balanced(s, a):
             return False, L
     return True, None
 
+
+def substitute(s, q):
+    """Ring n from ring n-1: e -> V e^(q-5), V -> V e^(q-6)."""
+    return "".join("V" + "e" * (q - 5) if c == "e" else "V" + "e" * (q - 6) for c in s)
+
+
+def equal_up_to_rotation(a, b):
+    return len(a) == len(b) and (a in b + b)
+
+
+print("=== substitution rule: ring n = sigma(ring n-1), up to rotation ===")
+for q, depths in [(7, [3, 4, 5, 6]), (8, [3, 4, 5]), (9, [3, 4]), (12, [3, 4]), (20, [3])]:
+    for n in depths:
+        prev_s, cur_s = type_sequence(q, n - 1), type_sequence(q, n)
+        ok = equal_up_to_rotation(substitute(prev_s, q), cur_s)
+        ok_rev = equal_up_to_rotation(substitute(prev_s[::-1], q), cur_s)
+        print(f"  q={q:2d} ring {n-1}->{n}: len {len(prev_s)}->{len(cur_s)}  "
+              f"match={'yes' if ok else ('yes (reversed orientation)' if ok_rev else 'NO')}")
 
 for q, depths in [(7, [4, 5, 6]), (8, [3, 4, 5]), (12, [3, 4]), (20, [2, 3])]:
     rc = ring_counts_seq(q, max(depths) + 1)

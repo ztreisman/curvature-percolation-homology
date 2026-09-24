@@ -27,7 +27,8 @@ with
 
 so that the large-curvature intercept is 5/4 - 2 pi / (3 sqrt 3) = 0.04080.
 Measured against the eleven values q = 7, 8, ..., 14, 16, 18, 20, the formula
-matches to rms 0.0005, every point within its own realization spread. A
+matches to rms 0.0005; the remaining differences, largest at q = 7, are
+the size of the O(1/lambda^2) term. A
 straight line fitted to the derived curve is 0.0406 + 0.1286/lambda; the
 empirical two-parameter fit is 0.0404 + 0.1316/lambda. The linear-in-1/lambda
 form is an output of the derivation, not an assumption.
@@ -45,9 +46,10 @@ The derivation has three parts, each checked separately by simulation:
    vertex has one spoke inward (e-type) or two (v-type). The v-type count is
    exactly v_n = rc[n-1] (ring n-1 is a cycle; each adjacent pair shares one
    child), so the fraction is rc[n-1]/rc[n] -> 1/lambda(q). The arrangement
-   around a ring is periodic with period rc[n]/q, the fundamental domain of
-   the q-fold rotational symmetry, and balanced within a period. A renewal sum
-   gives mu_wheel.
+   around a ring is given by a substitution: reading each ring as a cyclic
+   word in e and V, ring n = sigma^(n-1)(e^q) with sigma: e -> V e^(q-5),
+   V -> V e^(q-6). To first order in 1/lambda only the v-type fraction
+   matters, and a renewal sum gives mu_wheel.
 3. **The bridging correction.** The outermost ring (a 1 - 1/lambda fraction of
    the disk) attaches exactly. In an inner ring, two spoke-free runs on either
    side of an absent rim edge can be joined through the ring outside, via the
@@ -91,7 +93,9 @@ The derived law against measurement, no fitted curves:
 ## Repository layout
 
     paper/               LaTeX source, bibliography, compiled PDF, outline;
-                         the earlier proposal.* draft is kept for reference
+                         the earlier proposal.* draft is kept for reference;
+                         paper/arxiv/ is the flattened arXiv submission
+                         (tex, bbl, figures); rebuild with paper/make_arxiv.py
     figures/             all rendered figures used by the paper and this README
     results/             measured data: sweep_results.json (H1 sweep),
                          mu_q_results.json (MST density), q6_convergence_*.json,
@@ -112,7 +116,7 @@ The derived law against measurement, no fitted curves:
                            pc_window_check.py      share of H1 persistence near p_c
                            pc_ring_scan.py         beta_1(p_c) vs ring depth
                            xstar_check.py          v-type fraction = 1/lambda, verified
-                           vtype_pattern.py        ring pattern: period rc[n]/q, balanced
+                           vtype_pattern.py        ring pattern: the substitution sigma, checked
                            mu_derivation_check.py  one-ring term vs measurement
                            mu_derivation_sturmian.py  balanced vs i.i.d. pattern (negligible)
                            mu_residual_structure.py   inner-ring overcount by simulation
@@ -199,6 +203,8 @@ Aldous, D., and Steele, J. M. (2004). The objective method: probabilistic combin
 
 Nickel, M., and Kiela, D. (2017). Poincare embeddings for learning hierarchical representations. *NeurIPS*.
 
-Brill, A. (2024). Neural scaling laws rooted in the data distribution. arXiv:2412.07942.
+Hiraoka, Y., and Shirai, T. (2017). Minimum spanning acycle and lifetime of persistent homology in the Linial-Meshulam process. *Random Structures & Algorithms*, 51, 315-340. arXiv:1503.05669.
 
-Brill, A. (2025). Representation learning on a random lattice. arXiv:2504.20197.
+Skraba, P., Thoppe, G., and Yogeshwaran, D. (2020). Randomly weighted d-complexes: minimal spanning acycles and persistence diagrams. *Electronic Journal of Combinatorics*, 27(2), P2.11. arXiv:1701.00239.
+
+Lyons, R., Peres, Y., and Schramm, O. (2006). Minimal spanning forests. *Annals of Probability*, 34, 1665-1692. arXiv:math/0412263.
