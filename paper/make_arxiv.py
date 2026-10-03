@@ -4,7 +4,7 @@ Rebuild paper/arxiv/, the flattened arXiv submission: the tex with
 directory. Compile the main paper (pdflatex, bibtex, pdflatex x2) first so
 the .bbl is current.
 
-Suggested categories: math.PR (primary); cross-list math.AT, cond-mat.stat-mech.
+Posted as arXiv:2609.30347 (cond-mat.stat-mech, cross-listed to math.PR).
 """
 import os
 import re

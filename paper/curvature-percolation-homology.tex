@@ -145,7 +145,7 @@ Because the percolation complex is a triangulated topological disk (\S\ref{sec:d
 \]
 Total $H_1$ persistence is $\int_0^1\beta_1(p)\,dp$, the area under the loop-density curve. Integrating term by term:
 \begin{itemize}
-\item writing $u_e$ for edge $e$'s occupation threshold, $E(p)=|\{e\,|\,u_e\le p\}|$ gives $\int_0^1E(p)\,dp=\sum_e(1-u_e)$;
+\item $u_e$ is edge $e$'s occupation threshold, $E(p)=|\{e\,|\,u_e\le p\}|$ gives $\int_0^1E(p)\,dp=\sum_e(1-u_e)$;
 \item writing $m_t=\max(u_e\,|\, e\in t)$ for a triangle $t$'s occupation threshold, $\int_0^1F(p)\,dp=\sum_t(1-m_t)$;
 \item for the $\beta_0(p)$ term, let $T$ be the minimum spanning tree (MST) of $G$ under the weights $u_e$, the set of $V-1$ edges connecting all vertices at minimum total weight, and let $G_p$ and $T_p$ be the subgraphs of edges with weight at most $p$. Then $G_p$ and $T_p$ have the same connected components. Since $T_p\subseteq G_p$, every component of $T_p$ lies in one of $G_p$. Conversely, if an edge $e=xy$ of $G_p$ is not in $T$, the cycle property of minimum spanning trees says every edge on the path from $x$ to $y$ in $T$ is lighter than $u_e\le p$, so $x$ and $y$ are already joined in $T_p$. Hence $V-\beta_0(p)$ is the number of MST edges of weight at most $p$, and $\int_0^1\beta_0(p)\,dp = 1+w_{\mathrm{MST}}$, where $w_{\mathrm{MST}}=\sum_{e\in T}u_e$.
 \end{itemize}

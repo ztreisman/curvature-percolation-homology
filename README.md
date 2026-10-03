@@ -1,10 +1,18 @@
-# Persistent homology of percolation complexes on {3,q} tilings
+# Loop content of bond percolation on hyperbolic triangulations
+
+[![arXiv](https://img.shields.io/badge/arXiv-2609.30347-b31b1b.svg)](https://arxiv.org/abs/2609.30347)
+
+Code and data for
+
+> Z. Treisman, *Loop content of bond percolation on hyperbolic
+> triangulations: an exact identity and a 1/lambda expansion*,
+> [arXiv:2609.30347](https://arxiv.org/abs/2609.30347) (2026).
 
 Bond percolation on disk-shaped patches of the regular hyperbolic triangle
 tilings {3,q}, q >= 7, studied through the persistent H1 of the associated
 flag complex. The main result is a derivation, with no fitted parameters, of
 the total persistent H1 per vertex as a function of the tiling's growth rate
-lambda(q). The paper is in [`paper/`](paper/); this file summarizes the
+lambda(q). The LaTeX source is in [`paper/`](paper/); this file summarizes the
 result, the repository layout, and how to reproduce each piece.
 
 ---
@@ -95,7 +103,8 @@ The derived law against measurement, no fitted curves:
     paper/               LaTeX source, bibliography, compiled PDF, outline;
                          the earlier proposal.* draft is kept for reference;
                          paper/arxiv/ is the flattened arXiv submission
-                         (tex, bbl, figures); rebuild with paper/make_arxiv.py
+                         (tex, bbl, figures) as posted as arXiv:2609.30347v1;
+                         rebuild with paper/make_arxiv.py
     figures/             all rendered figures used by the paper and this README
     results/             measured data: sweep_results.json (H1 sweep),
                          mu_q_results.json (MST density), q6_convergence_*.json,
@@ -186,6 +195,23 @@ feature splitting. The pipeline exists (`src/brw_embedding.py`, `src/sae.py`,
 scales agreed on direction but not magnitude, and the configuration needs to
 be fixed and rerun before any numbers are reported; the paper describes the
 approach as work in progress and does not report those results.
+
+---
+
+## Citing
+
+    @misc{treisman2026loop,
+      author        = {Treisman, Zachary},
+      title         = {Loop content of bond percolation on hyperbolic triangulations:
+                       an exact identity and a $1/\lambda$ expansion},
+      year          = {2026},
+      eprint        = {2609.30347},
+      archivePrefix = {arXiv},
+      primaryClass  = {cond-mat.stat-mech},
+      doi           = {10.48550/arXiv.2609.30347}
+    }
+
+The tag `arxiv-v1` marks the state of this repository at submission.
 
 ---
 

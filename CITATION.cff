@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the paper."
+title: "curvature-percolation-homology"
+authors:
+  - family-names: Treisman
+    given-names: Zachary
+repository-code: "https://github.com/ztreisman/curvature-percolation-homology"
+preferred-citation:
+  type: article
+  title: "Loop content of bond percolation on hyperbolic triangulations: an exact identity and a 1/lambda expansion"
+  authors:
+    - family-names: Treisman
+      given-names: Zachary
+  year: 2026
+  identifiers:
+    - type: other
+      value: "arXiv:2609.30347"
+  doi: "10.48550/arXiv.2609.30347"
+  url: "https://arxiv.org/abs/2609.30347"
